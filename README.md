@@ -1,2 +1,3 @@
-### Hexlet tests and linter status:
-[![Actions Status](https://github.com/sol-un/backend-project-lvl4/workflows/hexlet-check/badge.svg)](https://github.com/sol-un/backend-project-lvl4/actions)
+This is a simple task manager app developed under the guidance of Hexlet, an educational project. [Read more about Hexlet (in Russian)](https://ru.hexlet.io/pages/about?utm_source=github&utm_medium=link&utm_campaign=koa-nodejs-application).
+
+The app is available here: https://young-sea-89414.herokuapp.com/
