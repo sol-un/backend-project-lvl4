@@ -20,10 +20,62 @@ export default (app) => {
         req.flash('info', i18next.t('flash.users.create.success'));
         reply.redirect(app.reverse('root'));
         return reply;
-      } catch ({ data }) {
+      } catch (error) {
         req.flash('error', i18next.t('flash.users.create.error'));
-        reply.render('users/new', { user: req.body.data, errors: data });
+        reply.render('users/new', { user: req.body.data, errors: error.data });
         return reply;
       }
+    })
+    .patch('/users/:id', { name: 'updateUser', preValidation: app.authenticate }, async (req, reply) => {
+      if (req.user.id !== Number(req.params.id)) {
+        req.flash('error', i18next.t('flash.users.edit.IDerror'));
+        reply.redirect(app.reverse('users'));
+        return reply;
+      }
+      try {
+        const {
+          firstName, lastName, email, password,
+        } = req.body.data;
+        const user = await app.objection.models.user.query().findById(req.user.id);
+        await user.$query()
+          .update({
+            firstName,
+            lastName,
+            email,
+            password,
+          });
+        req.flash('info', i18next.t('flash.users.edit.success'));
+        reply.redirect(app.reverse('root'));
+        return reply;
+      } catch (error) {
+        req.flash('error', i18next.t('flash.users.edit.error'));
+        reply.render('users/edit', { user: req.user, errors: error.data });
+        return reply;
+      }
+    })
+    .delete('/users/:id', { name: 'deleteUser', preValidation: app.authenticate }, async (req, reply) => {
+      if (req.user.id !== Number(req.params.id)) {
+        req.flash('error', i18next.t('flash.users.edit.IDerror'));
+        reply.redirect(app.reverse('users'));
+        return reply;
+      }
+      try {
+        await app.objection.models.user.query().deleteById(req.user.id);
+        req.logOut();
+        req.flash('info', i18next.t('flash.users.delete.success'));
+        reply.redirect(app.reverse('users'));
+        return reply;
+      } catch (error) {
+        return app.httpErrors.internalServerError(error);
+      }
+    })
+    .get('/users/:id/edit', { name: 'editUser', preValidation: app.authenticate }, (req, reply) => {
+      if (req.user.id !== Number(req.params.id)) {
+        req.flash('error', i18next.t('flash.users.edit.IDerror'));
+        reply.redirect(app.reverse('users'));
+        return reply;
+      }
+      reply.render('users/edit', { user: req.user });
+      return reply;
     });
 };

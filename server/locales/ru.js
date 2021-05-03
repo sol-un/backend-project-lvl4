@@ -2,7 +2,15 @@
 
 module.exports = {
   translation: {
-    appName: 'Fastify Шаблон',
+    appName: 'TaskManager',
+    entities: {
+      user: {
+        firstName: 'Имя',
+        lastName: 'Фамилия',
+        email: 'Email',
+        password: 'Пароль',
+      },
+    },
     flash: {
       session: {
         create: {
@@ -17,6 +25,14 @@ module.exports = {
         create: {
           error: 'Не удалось зарегистрировать',
           success: 'Пользователь успешно зарегистрирован',
+        },
+        edit: {
+          IDerror: 'Вы не можете редактировать или удалять другого пользователя',
+          error: 'Не удалось изменить',
+          success: 'Пользователь успешно изменён',
+        },
+        delete: {
+          success: 'Пользователь успешно удалён',
         },
       },
       authError: 'Доступ запрещён! Пожалуйста, авторизируйтесь.',
@@ -38,11 +54,19 @@ module.exports = {
       },
       users: {
         id: 'ID',
-        email: 'Email',
+        fullName: 'Полное имя',
         createdAt: 'Дата создания',
         new: {
           submit: 'Сохранить',
           signUp: 'Регистрация',
+        },
+        edit: {
+          submit: 'Изменить',
+          link: 'Изменить',
+          header: 'Изменение пользователя',
+        },
+        delete: {
+          link: 'Удалить',
         },
       },
       welcome: {
