@@ -1,0 +1,21 @@
+extends ../layouts/application.pug
+
+block content
+  a(class='nav-link' href=route('newStatus'))=t('views.statuses.newLink')
+  table.table.table-striped
+    thead
+      tr
+        th= t('views.statuses.id')
+        th= t('views.statuses.name')
+        th= t('views.statuses.createdAt')
+    tbody
+      each status in statuses
+        tr
+          td= status.id
+          td= status.name
+          td= formatDate(status.createdAt)
+          td
+            a(href=route('editStatus', { id: status.id }))=t('views.statuses.editLink')
+            +formFor()(action=route('deleteStatus', { id: status.id }) method="post")
+              input(class='btn btn-link' type='submit' value=t('views.statuses.deleteLink'))
+              +input()(name="_method" type="hidden" value="delete")

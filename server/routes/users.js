@@ -28,7 +28,7 @@ export default (app) => {
     })
     .patch('/users/:id', { name: 'updateUser', preValidation: app.authenticate }, async (req, reply) => {
       if (req.user.id !== Number(req.params.id)) {
-        req.flash('error', i18next.t('flash.users.edit.IDerror'));
+        req.flash('error', i18next.t('flash.users.IDerror'));
         reply.redirect(app.reverse('users'));
         return reply;
       }
@@ -55,7 +55,7 @@ export default (app) => {
     })
     .delete('/users/:id', { name: 'deleteUser', preValidation: app.authenticate }, async (req, reply) => {
       if (req.user.id !== Number(req.params.id)) {
-        req.flash('error', i18next.t('flash.users.edit.IDerror'));
+        req.flash('error', i18next.t('flash.users.IDerror'));
         reply.redirect(app.reverse('users'));
         return reply;
       }
@@ -71,7 +71,7 @@ export default (app) => {
     })
     .get('/users/:id/edit', { name: 'editUser', preValidation: app.authenticate }, (req, reply) => {
       if (req.user.id !== Number(req.params.id)) {
-        req.flash('error', i18next.t('flash.users.edit.IDerror'));
+        req.flash('error', i18next.t('flash.users.IDerror'));
         reply.redirect(app.reverse('users'));
         return reply;
       }

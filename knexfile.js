@@ -6,6 +6,10 @@ const migrations = {
   directory: path.join(__dirname, 'server', 'migrations'),
 };
 
+const seeds = {
+  directory: path.join(__dirname, 'server', 'seeds'),
+};
+
 module.exports = {
   development: {
     client: 'sqlite3',
@@ -14,6 +18,7 @@ module.exports = {
     },
     useNullAsDefault: true,
     migrations,
+    seeds,
   },
   test: {
     client: 'sqlite3',
