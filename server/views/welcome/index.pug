@@ -5,6 +5,28 @@ block content
     .card-body.p-5.bg-light
       .display-4= t('views.welcome.hello') + ', ' + user.firstName + '!'
       hr
-      p.lead= t('views.welcome.ownedTasks') + ': ' + ownedTasksCount
+      if (tasks.length === 0)
+        p.lead= t('views.welcome.noTasks')
+      else
+        p.lead= t('views.welcome.ownedTasks') + ':'
+        table.table.table-striped
+          thead
+            tr
+              th= t('views.tasks.id')
+              th= t('views.tasks.name')
+              th= t('views.tasks.status')
+              th= t('views.tasks.creator')
+              th= t('views.tasks.description')
+              th= t('views.tasks.createdAt')
+          tbody
+            each task in tasks
+              tr
+                td= task.id
+                td
+                  a(href=route('taskProfile', { id: task.id }))= task.name
+                td= task.statusName
+                td= `${task.creatorFirstName} ${task.creatorLastName}`
+                td= task.description
+                td= formatDate(task.createdAt)
       hr
       a.btn.btn-primary.btn-lg(href=route('tasks'))= t('views.welcome.tasksLink')
