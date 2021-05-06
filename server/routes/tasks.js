@@ -10,7 +10,7 @@ const predicates = {
 
 export default (app) => {
   app
-    .get('/tasks', { name: 'tasks' }, async (req, reply) => {
+    .get('/tasks', { name: 'tasks', preValidation: app.authenticate }, async (req, reply) => {
       const tasks = await app.objection.models.task.query()
         .join('statuses', 'statuses.id', '=', 'tasks.status_id')
         .join('users as creator', 'creator.id', 'tasks.creator_id')
@@ -28,7 +28,7 @@ export default (app) => {
       reply.render('tasks/index', { tasks });
       return reply;
     })
-    .get('/tasks/:id', { name: 'taskProfile' }, async (req, reply) => {
+    .get('/tasks/:id', { name: 'taskProfile', preValidation: app.authenticate }, async (req, reply) => {
       const task = await app.objection.models.task.query()
         .findById(req.params.id)
         .join('statuses', 'statuses.id', 'tasks.status_id')
@@ -52,7 +52,7 @@ export default (app) => {
       reply.render('tasks/profile', { task, labels });
       return reply;
     })
-    .get('/tasks/new', { name: 'newTask' }, async (req, reply) => {
+    .get('/tasks/new', { name: 'newTask', preValidation: app.authenticate }, async (req, reply) => {
       const task = new app.objection.models.task();
       const statuses = await app.objection.models.status.query();
       const users = await app.objection.models.user.query();
@@ -61,7 +61,7 @@ export default (app) => {
         task, statuses, users, labels,
       });
     })
-    .post('/tasks', async (req, reply) => {
+    .post('/tasks', { preValidation: app.authenticate }, async (req, reply) => {
       const {
         name,
         desription,
@@ -88,7 +88,6 @@ export default (app) => {
         reply.redirect(app.reverse('tasks'));
         return reply;
       } catch (error) {
-        console.log(error);
         const statuses = await app.objection.models.status.query();
         const users = await app.objection.models.user.query();
         const labels = await app.objection.models.label.query();
@@ -99,7 +98,7 @@ export default (app) => {
         return reply;
       }
     })
-    .patch('/tasks/:id', { name: 'updateTask' }, async (req, reply) => {
+    .patch('/tasks/:id', { name: 'updateTask', preValidation: app.authenticate }, async (req, reply) => {
       const task = await app.objection.models.task.query().findById(req.params.id);
 
       const {
@@ -131,7 +130,6 @@ export default (app) => {
         reply.redirect(app.reverse('tasks'));
         return reply;
       } catch (error) {
-        console.log(error);
         const statuses = await app.objection.models.status.query();
         const users = await app.objection.models.user.query();
         const labels = await app.objection.models.label.query();
@@ -158,7 +156,7 @@ export default (app) => {
     //     data, statuses, users, body, // labels,
     //   });
     // })
-    .delete('/tasks/:id', { name: 'deleteTask' }, async (req, reply) => {
+    .delete('/tasks/:id', { name: 'deleteTask', preValidation: app.authenticate }, async (req, reply) => {
       try {
         await app.objection.models.task.query().deleteById(req.params.id);
         req.flash('info', i18next.t('flash.tasks.delete.success'));
@@ -168,7 +166,7 @@ export default (app) => {
         return app.httpErrors.internalServerError(error);
       }
     })
-    .get('/tasks/:id/edit', { name: 'editTask' }, async (req, reply) => {
+    .get('/tasks/:id/edit', { name: 'editTask', preValidation: app.authenticate }, async (req, reply) => {
       const task = await app.objection.models.task.query().findById(req.params.id);
       const statuses = await app.objection.models.status.query();
       const users = await app.objection.models.user.query();

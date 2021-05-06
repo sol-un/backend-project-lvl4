@@ -11,7 +11,7 @@ export default (app) => {
       const label = new app.objection.models.label();
       reply.render('labels/new', { label });
     })
-    .post('/labels', async (req, reply) => {
+    .post('/labels', { preValidation: app.authenticate }, async (req, reply) => {
       try {
         const label = await app.objection.models.label.fromJson(req.body.data);
         await app.objection.models.label.query().insert(label);
@@ -24,7 +24,7 @@ export default (app) => {
         return reply;
       }
     })
-    .patch('/labels/:id', { name: 'updateLabel' }, async (req, reply) => {
+    .patch('/labels/:id', { name: 'updateLabel', preValidation: app.authenticate }, async (req, reply) => {
       const label = await app.objection.models.label.query().findById(req.params.id);
       try {
         const {
@@ -43,7 +43,7 @@ export default (app) => {
         return reply;
       }
     })
-    .delete('/labels/:id', { name: 'deleteLabel' }, async (req, reply) => {
+    .delete('/labels/:id', { name: 'deleteLabel', preValidation: app.authenticate }, async (req, reply) => {
       try {
         await app.objection.models.label.query().deleteById(req.params.id);
         req.flash('info', i18next.t('flash.labels.delete.success'));

@@ -11,7 +11,7 @@ export default (app) => {
       const status = new app.objection.models.status();
       reply.render('statuses/new', { status });
     })
-    .post('/statuses', async (req, reply) => {
+    .post('/statuses', { preValidation: app.authenticate }, async (req, reply) => {
       try {
         const status = await app.objection.models.status.fromJson(req.body.data);
         await app.objection.models.status.query().insert(status);
@@ -24,7 +24,7 @@ export default (app) => {
         return reply;
       }
     })
-    .patch('/statuses/:id', { name: 'updateStatus' }, async (req, reply) => {
+    .patch('/statuses/:id', { name: 'updateStatus', preValidation: app.authenticate }, async (req, reply) => {
       const status = await app.objection.models.status.query().findById(req.params.id);
       try {
         const {
@@ -43,7 +43,7 @@ export default (app) => {
         return reply;
       }
     })
-    .delete('/statuses/:id', { name: 'deleteStatus' }, async (req, reply) => {
+    .delete('/statuses/:id', { name: 'deleteStatus', preValidation: app.authenticate }, async (req, reply) => {
       const relatedTasks = await app.objection.models.task
         .query()
         .where('status_id', req.params.id);
