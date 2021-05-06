@@ -8,3 +8,5 @@ block content
     +input(signInForm, t('entities.user.email'), 'email', errors)(type="text")
     +input(signInForm, t('entities.user.password'),'password')(type="password")
     +submit(signInForm)(value=t('views.session.new.submit'))
+  p= t('views.session.noAccount') + ' '
+    a(href=(route('newUser')))= t('views.session.registration')

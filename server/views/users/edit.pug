@@ -5,9 +5,9 @@ block header
 
 block content
   +formFor()(action=route('updateUser', { id: user.id }) method="post")
+    input(name="_method" type="hidden" value="patch")
     +input(user, t('entities.user.firstName'), 'firstName', errors)(type="text")
     +input(user, t('entities.user.lastName'), 'lastName', errors)(type="text")
     +input(user, t('entities.user.email'), 'email', errors)(type="text")
     +input(user, t('entities.user.password'), 'password', errors)(type="password")
     +submit(user)(value=t('views.users.edit.submit'))
-    +input()(name="_method" type="hidden" value="patch")

@@ -1,0 +1,37 @@
+extends ../layouts/application.pug
+
+block header
+  = t('views.tasks.edit.header')
+
+block content
+  +formFor()(action=route('updateTask', { id: task.id }) method='post')
+    input(name="_method" type="hidden" value="patch")
+    +input(task, t('views.tasks.name'), 'name', errors)(type="text")
+    .form-group
+      label(for="data_description")=t('views.tasks.description')
+      textarea(
+        rows= '3'
+        id="data_description"
+        name="data[description]"
+        class="form-control"
+      )= task.description
+    .form-group
+      label(for="data_status_id")=t('views.tasks.status')
+      select(name='data[status_id]').form-control#data_status_id 
+        each status in statuses
+          - const isSelected = status.id === task.statusId;
+          option(value=`${status.id}` selected=isSelected)= status.name
+    .form-group
+      label(for="data_owner_id")=t('views.tasks.owner')
+      select(name='data[owner_id]').form-control#data_owner_id 
+        option
+        each user in users
+          - const isSelected = user.id === task.ownerId;
+          option(value=`${user.id}` selected=isSelected)= `${user.firstName} ${user.lastName}`
+    .form-group
+      label(for="data_label_ids")=t('views.tasks.labels')
+      select(multiple name='data[label_ids]').form-control#data_label_ids
+        each label in labels
+          - const isSelected = labelIds.includes(label.id);
+          option(value=label.id selected=isSelected)= label.name
+    +submit()(value=t('views.tasks.edit.submit'))

@@ -59,6 +59,15 @@ export default (app) => {
         reply.redirect(app.reverse('users'));
         return reply;
       }
+
+      const relatedTasks = await app.objection.models.task.query()
+        .where('creator_id', req.user.id).orWhere('owner_id', req.user.id);
+      if (relatedTasks.length > 0) {
+        req.flash('error', i18next.t('flash.users.delete.error'));
+        reply.redirect(app.reverse('users'));
+        return reply;
+      }
+
       try {
         await app.objection.models.user.query().deleteById(req.user.id);
         req.logOut();

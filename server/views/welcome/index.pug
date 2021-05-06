@@ -3,7 +3,8 @@ extends ../layouts/application.pug
 block content
   .card
     .card-body.p-5.bg-light
-      .display-4= t('views.welcome.index.hello')
-      p.lead= t('views.welcome.index.description')
+      .display-4= t('views.welcome.hello') + ', ' + user.firstName + '!'
       hr
-      a.btn.btn-primary.btn-lg(href="https://hexlet.io")= t('views.welcome.index.more')
+      p.lead= t('views.welcome.ownedTasks') + ': ' + ownedTasksCount
+      hr
+      a.btn.btn-primary.btn-lg(href=route('tasks'))= t('views.welcome.tasksLink')

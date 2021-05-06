@@ -1,0 +1,34 @@
+extends ../layouts/application.pug
+
+block content
+  .card
+    .card-header.bg-secondary.text-white
+      h2= task.name
+    .card-body.bg-light
+      p= task.description
+      hr
+      .container
+        .row.p-1
+          .col=t('views.tasks.creator')
+          .col=`${task.creatorFirstName} ${task.creatorLastName}`
+        .row.p-1
+          .col=t('views.tasks.owner')
+          .col=`${task.ownerFirstName || ''} ${task.ownerLastName || ''}`
+        .row.p-1
+          .col=t('views.tasks.status')
+          .col=task.statusName
+        .row.p-1
+          .col=t('views.tasks.createdAt')
+          .col=task.createdAt
+        .row.p-1
+          .col
+            h6=`${t('views.tasks.labels')}:`
+            ul
+              each label in labels
+                li= label.name
+        .row.p-1
+          .col
+            a(href=route('editTask', { id: task.id }))=t('views.tasks.editLink')
+            +formFor()(action=route('deleteTask', { id: task.id }) method="post")
+              input(name="_method" type="hidden" value="delete")
+              input(class='btn btn-link' type='submit' value=t('views.tasks.deleteLink'))

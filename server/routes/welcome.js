@@ -2,10 +2,13 @@
 
 export default (app) => {
   app
-    .get('/', { name: 'root' }, (req, reply) => {
-      reply.render('welcome/index');
-    })
-    .get('/protected', { name: 'protected', preValidation: app.authenticate }, (req, reply) => {
-      reply.render('welcome/index');
+    .get('/', { name: 'root' }, async (req, reply) => {
+      if (!req.isAuthenticated()) {
+        reply.redirect(app.reverse('newSession'));
+        return reply;
+      }
+      const ownedTasks = await app.objection.models.task.query().where('owner_id', req.user.id);
+      reply.render('welcome/index', { user: req.user, ownedTasksCount: ownedTasks.length });
+      return reply;
     });
 };

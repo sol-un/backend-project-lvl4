@@ -17,5 +17,5 @@ block content
           td
             a(href=route('editStatus', { id: status.id }))=t('views.statuses.editLink')
             +formFor()(action=route('deleteStatus', { id: status.id }) method="post")
+              input(name="_method" type="hidden" value="delete")
               input(class='btn btn-link' type='submit' value=t('views.statuses.deleteLink'))
-              +input()(name="_method" type="hidden" value="delete")

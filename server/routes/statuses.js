@@ -44,19 +44,14 @@ export default (app) => {
       }
     })
     .delete('/statuses/:id', { name: 'deleteStatus' }, async (req, reply) => {
-      // const tasks = await app.objection.models.task
-      //   .query()
-      //   .where('status_id', statusId);
-      // await Promise.all(tasks.map(async (task) => {
-      //   await TaskLabel
-      //     .query()
-      //     .delete()
-      //     .where('task_id', task.id);
-      //   await app.objection.models.task
-      //     .query()
-      //     .delete()
-      //     .where('id', task.id);
-      // }));
+      const relatedTasks = await app.objection.models.task
+        .query()
+        .where('status_id', req.params.id);
+      if (relatedTasks.length > 0) {
+        req.flash('error', i18next.t('flash.statuses.delete.error'));
+        reply.redirect(app.reverse('statuses'));
+        return reply;
+      }
       try {
         await app.objection.models.status.query().deleteById(req.params.id);
         req.flash('info', i18next.t('flash.statuses.delete.success'));
