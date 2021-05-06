@@ -45,11 +45,11 @@ export default (app) => {
             password,
           });
         req.flash('info', i18next.t('flash.users.edit.success'));
-        reply.redirect(app.reverse('root'));
+        reply.redirect(app.reverse('users'));
         return reply;
       } catch (error) {
         req.flash('error', i18next.t('flash.users.edit.error'));
-        reply.render('users/edit', { user: req.user, errors: error.data });
+        reply.render('users/edit', { user: { ...req.body.data, id: req.user.id }, errors: error.data });
         return reply;
       }
     })
