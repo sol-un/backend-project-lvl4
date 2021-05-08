@@ -19,7 +19,7 @@ export default class Task extends Model {
         name: { type: 'string', minLength: 1 },
         description: { type: 'string' },
         status_id: { type: 'integer' },
-        owner_id: { type: 'integer', default: null },
+        owner_id: { type: ['integer', 'null'] },
         creator_id: { type: 'integer' },
       },
     };

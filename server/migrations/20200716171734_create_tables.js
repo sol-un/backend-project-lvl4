@@ -35,6 +35,7 @@ exports.up = (knex) => (
       table.timestamps(true, true);
     })
     .createTable('tasks_labels', (table) => {
+      table.increments('id').primary();
       table.integer('task_id');
       table.integer('label_id');
       table.timestamps(true, true);

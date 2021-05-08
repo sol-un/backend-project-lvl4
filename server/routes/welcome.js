@@ -20,7 +20,6 @@ export default (app) => {
           'creator.first_name as creator_first_name',
           'creator.last_name as creator_last_name',
         );
-      console.log(ownedTasks);
       reply.render('welcome/index', { user: req.user, tasks: ownedTasks });
       return reply;
     });

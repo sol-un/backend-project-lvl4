@@ -45,6 +45,9 @@ export default (app) => {
     })
     .delete('/labels/:id', { name: 'deleteLabel', preValidation: app.authenticate }, async (req, reply) => {
       try {
+        await app.objection.models.taskLabel.query()
+          .where('label_id', req.params.id)
+          .delete();
         await app.objection.models.label.query().deleteById(req.params.id);
         req.flash('info', i18next.t('flash.labels.delete.success'));
         reply.redirect(app.reverse('labels'));

@@ -1,4 +1,5 @@
 import i18next from 'i18next';
+import { isEmpty } from 'lodash';
 
 const predicates = {
   filterByCreator: (task, id) => task.creatorId.toString() === id,
@@ -64,16 +65,17 @@ export default (app) => {
     .post('/tasks', { preValidation: app.authenticate }, async (req, reply) => {
       const {
         name,
-        desription,
-        owner_id, status_id, label_ids, // eslint-disable-line camelcase
+        description,
+        status_id, owner_id, label_ids = [], // eslint-disable-line camelcase
       } = req.body.data;
       const taskData = {
         name,
-        desription,
-        owner_id: Number(owner_id),
+        description,
+        owner_id: isEmpty(owner_id) ? null : Number(owner_id),
         status_id: Number(status_id),
         creator_id: Number(req.user.id),
       };
+
       try {
         const task = await app.objection.models.task.fromJson(taskData);
         await app.objection.models.task.query().insert(task);
@@ -100,11 +102,10 @@ export default (app) => {
     })
     .patch('/tasks/:id', { name: 'updateTask', preValidation: app.authenticate }, async (req, reply) => {
       const task = await app.objection.models.task.query().findById(req.params.id);
-
       const {
         name,
         description,
-        status_id, owner_id, label_ids, // eslint-disable-line camelcase
+        status_id, owner_id, label_ids = [], // eslint-disable-line camelcase
       } = req.body.data;
 
       try {
@@ -113,7 +114,7 @@ export default (app) => {
             name,
             description,
             creator_id: task.creatorId,
-            owner_id: Number(owner_id),
+            owner_id: isEmpty(owner_id) ? null : Number(owner_id),
             status_id: Number(status_id),
           });
 
@@ -158,6 +159,9 @@ export default (app) => {
     // })
     .delete('/tasks/:id', { name: 'deleteTask', preValidation: app.authenticate }, async (req, reply) => {
       try {
+        await app.objection.models.taskLabel.query()
+          .where('task_id', req.params.id)
+          .delete();
         await app.objection.models.task.query().deleteById(req.params.id);
         req.flash('info', i18next.t('flash.tasks.delete.success'));
         reply.redirect(app.reverse('tasks'));
