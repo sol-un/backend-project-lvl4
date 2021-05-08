@@ -6,9 +6,9 @@ const migrations = {
   directory: path.join(__dirname, 'server', 'migrations'),
 };
 
-const seeds = {
-  directory: path.join(__dirname, 'server', 'seeds'),
-};
+const getSeeds = (env) => ({
+  directory: path.join(__dirname, 'server', 'seeds', env),
+});
 
 module.exports = {
   development: {
@@ -18,7 +18,7 @@ module.exports = {
     },
     useNullAsDefault: true,
     migrations,
-    seeds,
+    seeds: getSeeds('development'),
   },
   test: {
     client: 'sqlite3',
@@ -34,6 +34,6 @@ module.exports = {
     },
     useNullAsDefault: true,
     migrations,
-    seeds,
+    seeds: getSeeds('production'),
   },
 };
