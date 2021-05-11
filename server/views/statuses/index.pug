@@ -1,7 +1,7 @@
 extends ../layouts/application.pug
 
 block content
-  a(class='nav-link' href=route('newStatus'))=t('views.statuses.newLink')
+  a.btn.btn-primary.mb-3(role='button' href=route('newStatus'))=t('views.statuses.newLink')
   table.table.table-striped
     thead
       tr
