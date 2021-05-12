@@ -5,9 +5,9 @@ block content
   table.table.table-striped
     thead
       tr
-        th= t('views.statuses.id')
-        th= t('views.statuses.name')
-        th= t('views.statuses.createdAt')
+        th= t('entities.id')
+        th= t('entities.name')
+        th= t('entities.createdAt')
     tbody
       each status in statuses
         tr
@@ -15,7 +15,7 @@ block content
           td= status.name
           td= formatDate(status.createdAt)
           td
-            a(href=route('editStatus', { id: status.id }))=t('views.statuses.editLink')
+            a(href=route('editStatus', { id: status.id }))=t('views.edit')
             +formFor()(action=route('deleteStatus', { id: status.id }) method="post")
               input(name="_method" type="hidden" value="delete")
-              input(class='btn btn-link' type='submit' value=t('views.statuses.deleteLink'))
+              input(class='btn btn-link' type='submit' value=t('views.delete'))

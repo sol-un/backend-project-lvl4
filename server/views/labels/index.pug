@@ -5,9 +5,9 @@ block content
   table.table.table-striped
     thead
       tr
-        th= t('views.labels.id')
-        th= t('views.labels.name')
-        th= t('views.labels.createdAt')
+        th= t('entities.id')
+        th= t('entities.name')
+        th= t('entities.createdAt')
     tbody
       each label in labels
         tr
@@ -15,7 +15,7 @@ block content
           td= label.name
           td= formatDate(label.createdAt)
           td
-            a(href=route('editLabel', { id: label.id }))=t('views.labels.editLink')
+            a(href=route('editLabel', { id: label.id }))=t('views.edit')
             +formFor()(action=route('deleteLabel', { id: label.id }) method="post")
               input(name="_method" type="hidden" value="delete")
-              input(class='btn btn-link' type='submit' value=t('views.labels.deleteLink'))
+              input(class='btn btn-link' type='submit' value=t('views.delete'))

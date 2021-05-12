@@ -12,12 +12,12 @@ block content
         table.table.table-striped
           thead
             tr
-              th= t('views.tasks.id')
-              th= t('views.tasks.name')
-              th= t('views.tasks.status')
-              th= t('views.tasks.creator')
-              th= t('views.tasks.description')
-              th= t('views.tasks.createdAt')
+              th= t('entities.id')
+              th= t('entities.name')
+              th= t('entities.task.status')
+              th= t('entities.task.creator')
+              th= t('entities.task.description')
+              th= t('entities.createdAt')
           tbody
             each task in tasks
               tr

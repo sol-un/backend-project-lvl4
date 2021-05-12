@@ -6,9 +6,9 @@ block header
 block content
   +formFor()(action=route('updateTask', { id: task.id }) method='post')
     input(name="_method" type="hidden" value="patch")
-    +input(task, t('views.tasks.name'), 'name', errors)(type="text")
+    +input(task, t('entities.name'), 'name', errors)(type="text")
     .form-group
-      label(for="data_description")=t('views.tasks.description')
+      label(for="data_description")=t('entities.task.description')
       textarea(
         rows= '3'
         id="data_description"
@@ -16,22 +16,22 @@ block content
         class="form-control"
       )= task.description
     .form-group
-      label(for="data_status_id")=t('views.tasks.status')
+      label(for="data_status_id")=t('entities.task.status')
       select(name='data[status_id]').form-control#data_status_id 
         each status in statuses
           - const isSelected = status.id === task.statusId;
           option(value=`${status.id}` selected=isSelected)= status.name
     .form-group
-      label(for="data_owner_id")=t('views.tasks.owner')
+      label(for="data_owner_id")=t('entities.task.owner')
       select(name='data[owner_id]').form-control#data_owner_id 
         option
         each user in users
           - const isSelected = user.id === task.ownerId;
           option(value=`${user.id}` selected=isSelected)= `${user.firstName} ${user.lastName}`
     .form-group
-      label(for="data_label_ids")=t('views.tasks.labels')
+      label(for="data_label_ids")=t('entities.task.labels')
       select(multiple name='data[label_ids]').form-control#data_label_ids
         each label in labels
           - const isSelected = labelIds.includes(label.id);
           option(value=label.id selected=isSelected)= label.name
-    +submit()(value=t('views.tasks.edit.submit'))
+    +submit()(value=t('views.edit'))

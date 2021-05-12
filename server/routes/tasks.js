@@ -106,7 +106,7 @@ export default (app) => {
         const statuses = await app.objection.models.status.query();
         const users = await app.objection.models.user.query();
         const labels = await app.objection.models.label.query();
-        req.flash('error', i18next.t('flash.tasks.create.error'));
+        req.flash('error', i18next.t('flash.createError'));
         reply.render('tasks/new', {
           task: taskData, statuses, users, labels, labelIds: label_ids, errors: error.data,
         });
@@ -147,7 +147,7 @@ export default (app) => {
         const statuses = await app.objection.models.status.query();
         const users = await app.objection.models.user.query();
         const labels = await app.objection.models.label.query();
-        req.flash('error', i18next.t('flash.tasks.edit.error'));
+        req.flash('error', i18next.t('flash.editError'));
         reply.render('tasks/edit', {
           task, statuses, users, labels, labelIds: label_ids, errors: error.data,
         });

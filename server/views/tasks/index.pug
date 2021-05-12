@@ -4,14 +4,14 @@ block content
   a.btn.btn-primary.mb-3(role='button' href=route('newTask'))=t('views.tasks.newLink')
   form(action=route('tasks') method='get')
     .form-group
-      label(for="byStatusId")=t('views.tasks.status')
+      label(for="byStatusId")=t('entities.task.status')
       select(name='byStatusId').form-control#byStatusId 
         option
         each status in statuses
           - const isSelected = status.id.toString() === query.byStatusId;
           option(value=`${status.id}` selected=isSelected)= status.name
     .form-group
-      label(for="byOwnerId")=t('views.tasks.owner')
+      label(for="byOwnerId")=t('entities.task.owner')
       select(name='byOwnerId').form-control#byOwnerId 
         option
         each user in users
@@ -34,12 +34,12 @@ block content
   table.table.table-striped
     thead
       tr
-        th= t('views.tasks.id')
-        th= t('views.tasks.name')
-        th= t('views.tasks.status')
-        th= t('views.tasks.creator')
-        th= t('views.tasks.owner')
-        th= t('views.tasks.createdAt')
+        th= t('entities.id')
+        th= t('entities.name')
+        th= t('entities.task.status')
+        th= t('entities.task.creator')
+        th= t('entities.task.owner')
+        th= t('entities.createdAt')
     tbody
       each task in tasks
         tr
@@ -51,7 +51,7 @@ block content
           td= `${task.ownerFirstName || ''} ${task.ownerLastName || ''}`
           td= formatDate(task.createdAt)
           td
-            a(href=route('editTask', { id: task.id }))=t('views.tasks.editLink')
+            a(href=route('editTask', { id: task.id }))=t('views.edit')
             +formFor()(action=route('deleteTask', { id: task.id }) method="post")
               input(name="_method" type="hidden" value="delete")
-              input(class='btn btn-link' type='submit' value=t('views.tasks.deleteLink'))
+              input(class='btn btn-link' type='submit' value=t('views.delete'))

@@ -19,7 +19,7 @@ export default (app) => {
         reply.redirect(app.reverse('labels'));
         return reply;
       } catch (error) {
-        req.flash('error', i18next.t('flash.labels.create.error'));
+        req.flash('error', i18next.t('flash.createError'));
         reply.render('labels/new', { label: req.body.data, errors: error.data });
         return reply;
       }
@@ -38,7 +38,7 @@ export default (app) => {
         reply.redirect(app.reverse('labels'));
         return reply;
       } catch (error) {
-        req.flash('error', i18next.t('flash.labels.edit.error'));
+        req.flash('error', i18next.t('flash.editError'));
         reply.render('labels/edit', { label, errors: error.data });
         return reply;
       }

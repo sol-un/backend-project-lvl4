@@ -4,11 +4,22 @@ module.exports = {
   translation: {
     appName: 'TaskManager',
     entities: {
+      id: 'ID',
+      name: 'Наименование',
+      createdAt: 'Дата создания',
       user: {
         firstName: 'Имя',
         lastName: 'Фамилия',
         email: 'Email',
         password: 'Пароль',
+        createdAt: 'Дата создания',
+      },
+      task: {
+        description: 'Описание',
+        status: 'Статус',
+        creator: 'Автор',
+        owner: 'Исполнитель',
+        labels: 'Метки',
       },
     },
     flash: {
@@ -28,7 +39,6 @@ module.exports = {
           success: 'Пользователь успешно зарегистрирован',
         },
         edit: {
-          error: 'Не удалось изменить',
           success: 'Пользователь успешно изменён',
         },
         delete: {
@@ -38,11 +48,9 @@ module.exports = {
       },
       statuses: {
         create: {
-          error: 'Не удалось создать',
           success: 'Статус успешно создан',
         },
         edit: {
-          error: 'Не удалось изменить',
           success: 'Статус успешно изменён',
         },
         delete: {
@@ -52,11 +60,9 @@ module.exports = {
       },
       labels: {
         create: {
-          error: 'Не удалось создать',
           success: 'Метка успешно создана',
         },
         edit: {
-          error: 'Не удалось изменить',
           success: 'Метка успешно изменена',
         },
         delete: {
@@ -65,17 +71,17 @@ module.exports = {
       },
       tasks: {
         create: {
-          error: 'Не удалось создать',
           success: 'Задача успешно создана',
         },
         edit: {
-          error: 'Не удалось изменить',
           success: 'Задача успешно изменена',
         },
         delete: {
           success: 'Задача успешно удалена',
         },
       },
+      editError: 'Не удалось изменить',
+      createError: 'Не удалось создать',
       authError: 'Доступ запрещён! Пожалуйста, авторизируйтесь.',
     },
     layouts: {
@@ -90,6 +96,9 @@ module.exports = {
       },
     },
     views: {
+      edit: 'Изменить',
+      delete: 'Удалить',
+      create: 'Создать',
       session: {
         noAccount: 'Нет аккаунта?',
         registration: 'Зарегистрироваться.',
@@ -99,74 +108,42 @@ module.exports = {
         },
       },
       users: {
-        id: 'ID',
         fullName: 'Полное имя',
-        createdAt: 'Дата создания',
-        editLink: 'Изменить',
-        deleteLink: 'Удалить',
         new: {
-          submit: 'Сохранить',
           signUp: 'Регистрация',
+          submit: 'Сохранить',
         },
         edit: {
-          submit: 'Изменить',
           header: 'Изменение пользователя',
         },
       },
       statuses: {
-        id: 'ID',
-        name: 'Наименование',
-        createdAt: 'Дата создания',
         newLink: 'Создать статус',
-        editLink: 'Изменить',
-        deleteLink: 'Удалить',
         new: {
           header: 'Создание статуса',
-          name: 'Наименование',
-          submit: 'Создать',
         },
         edit: {
-          submit: 'Изменить',
-          name: 'Наименование',
           header: 'Изменение статуса',
         },
       },
       labels: {
-        id: 'ID',
-        name: 'Наименование',
-        createdAt: 'Дата создания',
         newLink: 'Создать метку',
-        editLink: 'Изменить',
-        deleteLink: 'Удалить',
         new: {
           header: 'Создание метки',
-          name: 'Наименование',
-          submit: 'Создать',
         },
         edit: {
-          submit: 'Изменить',
-          name: 'Наименование',
           header: 'Изменение метки',
         },
       },
       tasks: {
-        id: 'ID',
-        name: 'Наименование',
-        description: 'Описание',
-        status: 'Статус',
-        creator: 'Автор',
-        owner: 'Исполнитель',
-        createdAt: 'Дата создания',
-        labels: 'Метки',
         newLink: 'Создать задачу',
-        editLink: 'Изменить',
-        deleteLink: 'Удалить',
+        showFiltered: 'Показать',
+        clearFilters: 'Сбросить',
+        myTasks: 'Только мои задачи',
         new: {
           header: 'Создание задачи',
-          submit: 'Создать',
         },
         edit: {
-          submit: 'Изменить',
           header: 'Изменение задачи',
         },
       },
