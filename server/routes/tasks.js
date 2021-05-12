@@ -2,11 +2,11 @@ import i18next from 'i18next';
 import { isEmpty } from 'lodash';
 
 const predicates = {
-  filterByCreator: (task, id) => task.creatorId.toString() === id,
-  filterByOwner: (task, id) => (task.ownerId
+  isCreatorUser: (task, id) => task.creatorId.toString() === id,
+  byOwnerId: (task, id) => (task.ownerId
     ? task.ownerId.toString() === id
     : false),
-  filterByStatus: (task, id) => task.statusId.toString() === id,
+  byStatusId: (task, id) => task.statusId.toString() === id,
 };
 
 export default (app) => {
@@ -17,16 +17,29 @@ export default (app) => {
         .join('users as creator', 'creator.id', 'tasks.creator_id')
         .leftJoin('users as owner', 'owner.id', 'tasks.owner_id')
         .select(
-          'tasks.id',
-          'tasks.name',
-          'tasks.created_at',
+          'tasks.*',
           'statuses.name as status_name',
           'creator.first_name as creator_first_name',
           'creator.last_name as creator_last_name',
           'owner.first_name as owner_first_name',
           'owner.last_name as owner_last_name',
         );
-      reply.render('tasks/index', { tasks });
+      const filteredTasks = Object.keys(req.query)
+        .filter((key) => Number(req.query[key]) > 0)
+        .reduce((acc, key) => acc.filter((task) => predicates[key](task, req.query[key])), tasks);
+
+      const statuses = await app.objection.models.status.query();
+      const users = await app.objection.models.user.query();
+      const labels = await app.objection.models.label.query();
+      console.log(req.query);
+      reply.render('tasks/index', {
+        tasks: filteredTasks,
+        creatorId: req.user.id,
+        query: req.query,
+        statuses,
+        users,
+        labels,
+      });
       return reply;
     })
     .get('/tasks/:id', { name: 'taskProfile', preValidation: app.authenticate }, async (req, reply) => {
@@ -141,22 +154,6 @@ export default (app) => {
         return reply;
       }
     })
-    // .post('/tasks/index', { name: 'taskFilter' }, async (req, reply) => {
-    //   const { body } = req;
-    //   const statuses = await app.objection.models.status.query();
-    //   const users = await app.objection.models.user.query();
-    //   // const labels = await app.objection.models.label.query();
-
-    //   const tasks = await app.objection.models.task.query();
-    //   const filteredTasks = Object.keys(body)
-    //     .filter((key) => body[key] >= 0)
-    //     .reduce((acc, key) => _.pickBy(acc, (task) => predicates[key](task, body[key])), tasks);
-    //   // const taskPromises = _.values(filteredTasks).map((task) => promiseTaskData(task, app));
-    //   const data = await Promise.all(taskPromises);
-    //   reply.render('tasks/index', {
-    //     data, statuses, users, body, // labels,
-    //   });
-    // })
     .delete('/tasks/:id', { name: 'deleteTask', preValidation: app.authenticate }, async (req, reply) => {
       try {
         await app.objection.models.taskLabel.query()
