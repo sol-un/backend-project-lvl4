@@ -9,26 +9,26 @@ block content
       hr
       .container
         .row.p-1
-          .col=t('views.tasks.creator')
+          .col=t('entities.task.creator')
           .col=`${task.creatorFirstName} ${task.creatorLastName}`
         .row.p-1
-          .col=t('views.tasks.owner')
+          .col=t('entities.task.owner')
           .col=`${task.ownerFirstName || ''} ${task.ownerLastName || ''}`
         .row.p-1
-          .col=t('views.tasks.status')
+          .col=t('entities.task.status')
           .col=task.statusName
         .row.p-1
-          .col=t('views.tasks.createdAt')
+          .col=t('entities.createdAt')
           .col=task.createdAt
         .row.p-1
           .col
-            h6=`${t('views.tasks.labels')}:`
+            h6=`${t('entities.task.labels')}:`
             ul
               each label in labels
                 li= label.name
         .row.p-1
           .col
-            a(href=route('editTask', { id: task.id }))=t('views.tasks.editLink')
+            a(href=route('editTask', { id: task.id }))=t('views.edit')
             +formFor()(action=route('deleteTask', { id: task.id }) method="post")
               input(name="_method" type="hidden" value="delete")
-              input(class='btn btn-link' type='submit' value=t('views.tasks.deleteLink'))
+              input(class='btn btn-link' type='submit' value=t('views.delete'))
