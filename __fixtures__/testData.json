@@ -8,5 +8,32 @@
       "email": "lawrence.kulas87@outlook.com",
       "password": "O6AvLIQL1cbzrre"
     }
+  },
+  "statuses": {
+    "new": {
+      "name": "Testing"
+    },
+    "existing": {
+      "name": "New"
+    }
+  },
+  "labels": {
+    "new": {
+      "name": "Hexlet Forever"
+    },
+    "existing": {
+      "name": "Development"
+    }
+  },
+  "tasks": {
+    "new": {
+      "name": "Test Task 3",
+      "status_id": "1",
+      "owner_id": "3",
+      "description": "This Task if for testing purposes only."
+    },
+    "existing": {
+      "name": "Test Task"
+    }
   }
 }

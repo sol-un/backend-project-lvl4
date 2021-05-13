@@ -31,7 +31,6 @@ export default (app) => {
       const statuses = await app.objection.models.status.query();
       const users = await app.objection.models.user.query();
       const labels = await app.objection.models.label.query();
-      console.log(req.query);
       reply.render('tasks/index', {
         tasks: filteredTasks,
         creatorId: req.user.id,
@@ -144,6 +143,7 @@ export default (app) => {
         reply.redirect(app.reverse('tasks'));
         return reply;
       } catch (error) {
+        console.log(error);
         const statuses = await app.objection.models.status.query();
         const users = await app.objection.models.user.query();
         const labels = await app.objection.models.label.query();

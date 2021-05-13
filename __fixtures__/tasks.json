@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Test Task",
+    "description": "This task was created automatically by the system",
+    "status_id": 2,
+    "creator_id": 1,
+    "owner_id": 3
+  },
+  {
+    "name": "Test Task 2",
+    "status_id": 2,
+    "creator_id": 1
+  }
+]

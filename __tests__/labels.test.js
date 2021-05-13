@@ -1,11 +1,9 @@
 // @ts-check
 
-import _ from 'lodash';
 import getApp from '../server/index.js';
-import encrypt from '../server/lib/secure.js';
 import { getTestData, prepareData } from './helpers/index.js';
 
-describe('test users CRUD', () => {
+describe('test labels CRUD', () => {
   let app;
   let knex;
   let models;
@@ -35,28 +33,29 @@ describe('test users CRUD', () => {
   it('index', async () => {
     const response = await app.inject({
       method: 'GET',
-      url: app.reverse('users'),
+      url: app.reverse('labels'),
+      cookies,
     });
-
     expect(response.statusCode).toBe(200);
-    expect(await models.user.query()).toHaveLength(3);
+    expect(await models.status.query()).toHaveLength(2);
   });
 
   it('new', async () => {
     const response = await app.inject({
       method: 'GET',
-      url: app.reverse('newUser'),
+      url: app.reverse('newLabel'),
+      cookies,
     });
 
     expect(response.statusCode).toBe(200);
   });
 
   it('edit', async () => {
-    const { id } = await models.user.query().findOne({ email: testData.users.existing.email });
+    const { id } = await models.label.query().findOne({ name: testData.labels.existing.name });
 
     const response = await app.inject({
       method: 'GET',
-      url: app.reverse('editUser', { id }),
+      url: app.reverse('editLabel', { id }),
       cookies,
     });
 
@@ -64,59 +63,52 @@ describe('test users CRUD', () => {
   });
 
   it('create', async () => {
-    const params = testData.users.new;
+    const params = testData.labels.new;
     const response = await app.inject({
       method: 'POST',
-      url: app.reverse('users'),
+      url: app.reverse('labels'),
+      cookies,
       payload: {
         data: params,
       },
     });
 
     expect(response.statusCode).toBe(302);
-    const expected = {
-      ..._.omit(params, 'password'),
-      passwordDigest: encrypt(params.password),
-    };
-    const user = await models.user.query().findOne({ email: params.email });
-    expect(user).toMatchObject(expected);
+
+    const status = await models.label.query().findOne({ name: params.name });
+    expect(status).toMatchObject(params);
   });
 
   it('update', async () => {
-    const { id } = await models.user.query().findOne({ email: testData.users.existing.email });
+    const { id } = await models.label.query().findOne({ name: testData.labels.existing.name });
 
-    const params = {
-      ...testData.users.existing,
-      email: 'email_updated@test.com',
-    };
+    const params = { name: 'Label Name Updated' };
 
     const response = await app.inject({
       method: 'PATCH',
-      url: app.reverse('updateUser', { id }),
+      url: app.reverse('updateLabel', { id }),
       cookies,
       payload: {
         data: params,
       },
     });
     expect(response.statusCode).toBe(302);
-    const expected = {
-      ..._.omit(params, 'password'),
-      passwordDigest: encrypt(params.password),
-    };
-    const user = await models.user.query().findById(id);
-    expect(user).toMatchObject(expected);
+
+    const label = await models.label.query().findById(id);
+    expect(label).toMatchObject(params);
   });
 
   it('delete', async () => {
-    const { id } = await models.user.query().findOne({ email: testData.users.existing.email });
+    const { id } = await models.label.query().findOne({ name: testData.labels.existing.name });
 
     const response = await app.inject({
       method: 'DELETE',
-      url: app.reverse('deleteUser', { id }),
+      url: app.reverse('deleteLabel', { id }),
       cookies,
     });
     expect(response.statusCode).toBe(302);
-    expect(await models.user.query().findById(id)).toBeUndefined();
+
+    expect(await models.label.query().findById(id)).toBeUndefined();
   });
 
   afterEach(async () => {
