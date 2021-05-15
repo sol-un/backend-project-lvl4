@@ -30,3 +30,16 @@ mixin buttonTo(action, method)
   form(action=action, method="post")
     input(name="_method" type="hidden" value=method)
     input(type='submit')&attributes(attributes)
+
+mixin select(labelText, propertyName)
+  - inputId = getInputId(propertyName)
+  .form-group
+    label(
+      for= inputId
+    )= labelText
+    select(
+      id=inputId
+      name=getInputName(propertyName)
+      class='form-control'
+    )&attributes(attributes)
+      block

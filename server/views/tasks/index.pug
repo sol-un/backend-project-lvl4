@@ -3,27 +3,21 @@ extends ../layouts/application.pug
 block content
   a.btn.btn-primary.mb-3(role='button' href=route('newTask'))=t('views.tasks.newLink')
   form(action=route('tasks') method='get')
-    .form-group
-      label(for="byStatusId")=t('entities.task.status')
-      select(name='byStatusId').form-control#byStatusId 
-        option
-        each status in statuses
-          - const isSelected = status.id.toString() === query.byStatusId;
-          option(value=`${status.id}` selected=isSelected)= status.name
-    .form-group
-      label(for="byOwnerId")=t('entities.task.owner')
-      select(name='byOwnerId').form-control#byOwnerId 
-        option
-        each user in users
-          - const isSelected = user.id.toString() === query.byOwnerId;
-          option(value=`${user.id}` selected=isSelected)= `${user.firstName} ${user.lastName}`
-    //- .form-group
-    //-   label(for="label_id")=t('views.tasks.labels')
-    //-   select(name='label_id').form-control#label_id
-    //-     option
-    //-     each label in labels
-    //-       - const isSelected = labelIds.includes(label.id);
-    //-       option(value=label.id selected=isSelected)= label.name
+    +select(t('entities.task.status'), 'byStatusId')(name='byStatusId')
+      option
+      each status in statuses
+        - const isSelected = status.id.toString() === query.byStatusId;
+        option(value=`${status.id}` selected=isSelected)= status.name
+    +select(t('entities.task.owner'), 'byOwnerId')(name='byOwnerId')
+      option
+      each user in users
+        - const isSelected = user.id.toString() === query.byOwnerId;
+        option(value=`${user.id}` selected=isSelected)= `${user.firstName} ${user.lastName}`
+    //- +select(t('entities.task.labels'), 'byLabelIds')(name='byLabelIds')
+    //-   option
+    //-   each label in labels
+    //-     - const isSelected = labelIds.includes(label.id);
+    //-     option(value=label.id selected=isSelected)= label.name
     .form-group.form-check
       - const isSelected = Boolean(query.isCreatorUser);
       input#isCreatorUser.form-check-input(type='checkbox' name='isCreatorUser' value=creatorId checked=isSelected)
