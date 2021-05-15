@@ -139,6 +139,7 @@ module.exports = {
         newLink: 'Создать задачу',
         showFiltered: 'Показать',
         clearFilters: 'Сбросить',
+        label: 'Метка',
         myTasks: 'Только мои задачи',
         new: {
           header: 'Создание задачи',

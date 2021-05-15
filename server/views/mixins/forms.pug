@@ -25,6 +25,8 @@ mixin input(entity, labelText, propertyName, errors = {})
 mixin submit(form = null)
   .form-group
     input(class='btn btn-primary' type='submit')&attributes(attributes)
+    if (block)
+      block
 
 mixin buttonTo(action, method)
   form(action=action, method="post")

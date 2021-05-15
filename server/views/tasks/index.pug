@@ -13,18 +13,17 @@ block content
       each user in users
         - const isSelected = user.id.toString() === query.byOwnerId;
         option(value=`${user.id}` selected=isSelected)= `${user.firstName} ${user.lastName}`
-    //- +select(t('entities.task.labels'), 'byLabelIds')(name='byLabelIds')
-    //-   option
-    //-   each label in labels
-    //-     - const isSelected = labelIds.includes(label.id);
-    //-     option(value=label.id selected=isSelected)= label.name
+    +select(t('views.tasks.label'), 'byLabelId')(name='byLabelId')
+      option
+      each label in labels
+        - const isSelected = label.id.toString() === query.byLabelId;
+        option(value=label.id selected=isSelected)= label.name
     .form-group.form-check
-      - const isSelected = Boolean(query.isCreatorUser);
-      input#isCreatorUser.form-check-input(type='checkbox' name='isCreatorUser' value=creatorId checked=isSelected)
-      label.form-check-label(for='isCreatorUser')= t('views.tasks.myTasks')
-    .form-group
-      input.btn.btn-primary.mx-3(type='submit' value=t('views.tasks.showFiltered'))
-      a.btn.btn-primary(role='button' href=route('tasks'))=t('views.tasks.clearFilters')
+      - const isSelected = Boolean(query.byCreatorId);
+      input#byCreatorId.form-check-input(type='checkbox' name='byCreatorId' value=creatorId checked=isSelected)
+      label.form-check-label(for='byCreatorId')= t('views.tasks.myTasks')
+    +submit()(value=t('views.tasks.showFiltered'))
+      a.btn.btn-primary.ml-2(role='button' href=route('tasks'))=t('views.tasks.clearFilters')
   table.table.table-striped
     thead
       tr

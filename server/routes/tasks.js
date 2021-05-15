@@ -2,11 +2,12 @@ import i18next from 'i18next';
 import { isEmpty } from 'lodash';
 
 const predicates = {
-  isCreatorUser: (task, id) => task.creatorId.toString() === id,
+  byCreatorId: (task, id) => task.creatorId.toString() === id,
   byOwnerId: (task, id) => (task.ownerId
     ? task.ownerId.toString() === id
     : false),
   byStatusId: (task, id) => task.statusId.toString() === id,
+  byLabelId: (task, id) => task.labelIds.includes(Number(id)),
 };
 
 export default (app) => {
@@ -24,9 +25,17 @@ export default (app) => {
           'owner.first_name as owner_first_name',
           'owner.last_name as owner_last_name',
         );
+
+      const tasksLabels = await app.objection.models.taskLabel.query();
+      const tasksWithLabels = tasks.map((task) => {
+        const labelIds = tasksLabels
+          .reduce((acc, item) => (item.taskId === task.id ? [...acc, item.labelId] : acc), []);
+        return { ...task, labelIds };
+      });
       const filteredTasks = Object.keys(req.query)
         .filter((key) => Number(req.query[key]) > 0)
-        .reduce((acc, key) => acc.filter((task) => predicates[key](task, req.query[key])), tasks);
+        .reduce((acc, key) => acc
+          .filter((task) => predicates[key](task, req.query[key])), tasksWithLabels);
 
       const statuses = await app.objection.models.status.query();
       const users = await app.objection.models.user.query();
