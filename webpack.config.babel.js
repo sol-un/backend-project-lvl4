@@ -1,5 +1,6 @@
 import path from 'path';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import Dotenv from 'dotenv-webpack';
 
 const mode = process.env.NODE_ENV || 'development';
 
@@ -31,5 +32,18 @@ module.exports = {
       },
     ],
   },
-  plugins: [new MiniCssExtractPlugin()],
+  plugins: [new MiniCssExtractPlugin(),
+    (function () {
+      switch (mode) {
+        case 'development':
+          return new Dotenv();
+        case 'production':
+          return new Dotenv({ systemvars: true });
+        case 'test':
+          return new Dotenv({ systemvars: true });
+        default:
+          throw new Error(`Unknown environment variable: ${mode}!`);
+      }
+    }()),
+  ],
 };

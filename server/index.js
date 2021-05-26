@@ -1,6 +1,6 @@
 // @ts-check
 
-import dotenv from 'dotenv';
+// import dotenv from 'dotenv';
 import path from 'path';
 import fastify from 'fastify';
 import fastifyStatic from 'fastify-static';
@@ -27,7 +27,7 @@ import knexConfig from '../knexfile.js';
 import models from './models/index.js';
 import FormStrategy from './lib/passportStrategies/FormStrategy.js';
 
-dotenv.config();
+// dotenv.config();
 const mode = process.env.NODE_ENV || 'development';
 const isProduction = mode === 'production';
 const isDevelopment = mode === 'development';
@@ -90,7 +90,7 @@ const registerPlugins = (app) => {
   app.register(fastifyReverseRoutes);
   app.register(fastifyFormbody, { parser: qs.parse });
   app.register(fastifySecureSession, {
-    secret: process.env.SESSION_KEY,
+    secret: process.env.SESSION_KEY || 'secret_session_key_for_testing_purposes',
     cookie: {
       path: '/',
     },

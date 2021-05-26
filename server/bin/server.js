@@ -1,10 +1,10 @@
 #! /usr/bin/env node
 
-import dotenv from 'dotenv';
+// import dotenv from 'dotenv';
 import Rollbar from 'rollbar';
 import getApp from '../index.js';
 
-dotenv.config();
+// dotenv.config();
 
 const rollbar = new Rollbar({
   accessToken: process.env.ROLLBAR_ACCESS_TOKEN,
