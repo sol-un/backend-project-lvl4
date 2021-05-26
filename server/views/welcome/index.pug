@@ -3,30 +3,37 @@ extends ../layouts/application.pug
 block content
   .card
     .card-body.p-5.bg-light
-      .display-4= t('views.welcome.hello') + ', ' + user.firstName + '!'
+      .display-4= t('views.welcome.index.hello')
+      p.lead= t('views.welcome.index.description')
       hr
-      if (tasks.length === 0)
-        p.lead= t('views.welcome.noTasks')
-      else
-        p.lead= t('views.welcome.ownedTasks') + ':'
-        table.table.table-striped
-          thead
-            tr
-              th= t('entities.id')
-              th= t('entities.name')
-              th= t('entities.task.status')
-              th= t('entities.task.creator')
-              th= t('entities.task.description')
-              th= t('entities.createdAt')
-          tbody
-            each task in tasks
-              tr
-                td= task.id
-                td
-                  a(href=route('taskProfile', { id: task.id }))= task.name
-                td= task.statusName
-                td= `${task.creatorFirstName} ${task.creatorLastName}`
-                td= task.description
-                td= formatDate(task.createdAt)
-      hr
-      a.btn.btn-primary.btn-lg(href=route('tasks'))= t('views.welcome.tasksLink')
+      a.btn.btn-primary.btn-lg(href="https://hexlet.io")= t('views.welcome.index.more')
+//- block content
+//-   .card
+//-     .card-body.p-5.bg-light
+//-       .display-4= t('views.welcome.hello') + ', ' + user.firstName + '!'
+//-       hr
+//-       if (tasks.length === 0)
+//-         p.lead= t('views.welcome.noTasks')
+//-       else
+//-         p.lead= t('views.welcome.ownedTasks') + ':'
+//-         table.table.table-striped
+//-           thead
+//-             tr
+//-               th= t('entities.id')
+//-               th= t('entities.name')
+//-               th= t('entities.task.status')
+//-               th= t('entities.task.creator')
+//-               th= t('entities.task.description')
+//-               th= t('entities.createdAt')
+//-           tbody
+//-             each task in tasks
+//-               tr
+//-                 td= task.id
+//-                 td
+//-                   a(href=route('taskProfile', { id: task.id }))= task.name
+//-                 td= task.statusName
+//-                 td= `${task.creatorFirstName} ${task.creatorLastName}`
+//-                 td= task.description
+//-                 td= formatDate(task.createdAt)
+//-       hr
+//-       a.btn.btn-primary.btn-lg(href=route('tasks'))= t('views.welcome.tasksLink')

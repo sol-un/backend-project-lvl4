@@ -33,7 +33,7 @@ module.exports = {
     ],
   },
   plugins: [new MiniCssExtractPlugin(),
-    (function () {
+    (function () { // eslint-disable-line func-names
       switch (mode) {
         case 'development':
           return new Dotenv();

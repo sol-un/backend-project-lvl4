@@ -61,7 +61,7 @@ export default (app) => {
         return app.httpErrors.internalServerError(error);
       }
     })
-    .get('/statuses/:id', { name: 'editStatus', preValidation: app.authenticate }, async (req, reply) => {
+    .get('/statuses/:id/edit', { name: 'editStatus', preValidation: app.authenticate }, async (req, reply) => {
       const status = await app.objection.models.status.query().findById(req.params.id);
       reply.render('statuses/edit', { status });
       return reply;

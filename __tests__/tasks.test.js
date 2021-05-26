@@ -75,17 +75,17 @@ describe('test tasks CRUD', () => {
 
     expect(response.statusCode).toBe(302);
     const task = await models.task.query().findOne({ name: params.name });
-    expect(task.statusId.toString()).toBe(params.status_id);
-    expect(task.ownerId.toString()).toBe(params.owner_id);
+    expect(task.statusId.toString()).toBe(params.statusId);
+    expect(task.ownerId.toString()).toBe(params.executorId);
     expect(task.description).toBe(params.description);
   });
 
   it('update', async () => {
     const initialTask = await models.task.query().findOne({ name: testData.tasks.existing.name });
     const params = {
-      creator_id: initialTask.creatorId,
-      status_id: '1',
-      owner_id: '2',
+      creatorId: initialTask.creatorId,
+      statusId: '1',
+      executorId: '2',
       name: 'Task Name Updated',
       description: 'New description.',
     };
@@ -101,8 +101,8 @@ describe('test tasks CRUD', () => {
     expect(response.statusCode).toBe(302);
 
     const task = await models.task.query().findById(initialTask.id);
-    expect(task.statusId.toString()).toBe(params.status_id);
-    expect(task.ownerId.toString()).toBe(params.owner_id);
+    expect(task.statusId.toString()).toBe(params.statusId);
+    expect(task.ownerId.toString()).toBe(params.executorId);
     expect(task.name).toBe(params.name);
     expect(task.description).toBe(params.description);
   });

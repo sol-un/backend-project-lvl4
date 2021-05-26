@@ -12,12 +12,12 @@ describe('requests', () => {
     app = await getApp();
   });
 
-  it('GET 302', async () => {
+  it('GET 200', async () => {
     const res = await app.inject({
       method: 'GET',
       url: app.reverse('root'),
     });
-    expect(res.statusCode).toBe(302);
+    expect(res.statusCode).toBe(200);
   });
 
   it('GET 404', async () => {

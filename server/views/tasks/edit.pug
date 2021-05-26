@@ -15,15 +15,15 @@ block content
         name="data[description]"
         class="form-control"
       )= task.description
-    +select(t('entities.task.status'), 'status_id')
+    +select(t('entities.task.status'), 'statusId')
       each status in statuses
         - const isSelected = status.id === task.statusId;
         option(value=`${status.id}` selected=isSelected)= status.name
-    +select(t('entities.task.owner'), 'owner_id')
+    +select(t('entities.task.owner'), 'executorId')
       each user in users
         - const isSelected = user.id === task.ownerId;
         option(value=`${user.id}` selected=isSelected)= `${user.firstName} ${user.lastName}`
-    +select(t('entities.task.labels'), 'label_ids')(multiple)
+    +select(t('entities.task.labels'), 'labels')(multiple)
       each label in labels
         - const isSelected = labelIds.includes(label.id);
         option(value=label.id selected=isSelected)= label.name

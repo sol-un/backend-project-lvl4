@@ -3,17 +3,17 @@ extends ../layouts/application.pug
 block content
   a.btn.btn-primary.mb-3(role='button' href=route('newTask'))=t('views.tasks.newLink')
   form(action=route('tasks') method='get')
-    +select(t('entities.task.status'), 'byStatusId')(name='byStatusId')
+    +select(t('entities.task.status'), 'status')(name='byStatusId')
       option
       each status in statuses
         - const isSelected = status.id.toString() === query.byStatusId;
         option(value=`${status.id}` selected=isSelected)= status.name
-    +select(t('entities.task.owner'), 'byOwnerId')(name='byOwnerId')
+    +select(t('entities.task.owner'), 'executor')(name='byOwnerId')
       option
       each user in users
         - const isSelected = user.id.toString() === query.byOwnerId;
         option(value=`${user.id}` selected=isSelected)= `${user.firstName} ${user.lastName}`
-    +select(t('views.tasks.label'), 'byLabelId')(name='byLabelId')
+    +select(t('views.tasks.label'), 'label')(name='byLabelId')
       option
       each label in labels
         - const isSelected = label.id.toString() === query.byLabelId;

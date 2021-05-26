@@ -1,8 +1,6 @@
-exports.seed = function (knex) {
-  return knex('labels').del()
-    .then(() => knex('labels').insert([
-      { name: 'System Maintenance' },
-      { name: 'Development' },
-      { name: 'Hexlet Forever' },
-    ]));
-};
+exports.seed = (knex) => knex('labels').del()
+  .then(() => knex('labels').insert([
+    { name: 'System Maintenance' },
+    { name: 'Development' },
+    { name: 'Hexlet Forever' },
+  ]));

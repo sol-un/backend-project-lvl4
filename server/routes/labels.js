@@ -56,7 +56,7 @@ export default (app) => {
         return app.httpErrors.internalServerError(error);
       }
     })
-    .get('/labels/:id', { name: 'editLabel', preValidation: app.authenticate }, async (req, reply) => {
+    .get('/labels/:id/edit', { name: 'editLabel', preValidation: app.authenticate }, async (req, reply) => {
       const label = await app.objection.models.label.query().findById(req.params.id);
       reply.render('labels/edit', { label });
       return reply;

@@ -87,13 +87,13 @@ export default (app) => {
       const {
         name,
         description,
-        status_id, owner_id, label_ids = [], // eslint-disable-line camelcase
+        statusId, executorId, labels: labelIds = [],
       } = req.body.data;
       const taskData = {
         name,
         description,
-        owner_id: isEmpty(owner_id) ? null : Number(owner_id),
-        status_id: Number(status_id),
+        owner_id: isEmpty(executorId) ? null : Number(executorId),
+        status_id: Number(statusId),
         creator_id: Number(req.user.id),
       };
 
@@ -101,7 +101,7 @@ export default (app) => {
         const task = await app.objection.models.task.fromJson(taskData);
         await app.objection.models.task.query().insert(task);
 
-        const labelsData = [...label_ids] // eslint-disable-line camelcase
+        const labelsData = [...labelIds]
           .map((id) => ({ task_id: task.id, label_id: Number(id) }));
         const labelInsertionPromises = labelsData
           .map(async (item) => app.objection.models.taskLabel.query().insert(item));
@@ -116,7 +116,7 @@ export default (app) => {
         const labels = await app.objection.models.label.query();
         req.flash('error', i18next.t('flash.createError'));
         reply.render('tasks/new', {
-          task: taskData, statuses, users, labels, labelIds: label_ids, errors: error.data,
+          task: taskData, statuses, users, labels, labelIds, errors: error.data,
         });
         return reply;
       }
@@ -126,7 +126,7 @@ export default (app) => {
       const {
         name,
         description,
-        status_id, owner_id, label_ids = [], // eslint-disable-line camelcase
+        statusId, executorId, labels: labelIds = [], // eslint-disable-line camelcase
       } = req.body.data;
 
       try {
@@ -135,14 +135,14 @@ export default (app) => {
             name,
             description,
             creator_id: task.creatorId,
-            owner_id: isEmpty(owner_id) ? null : Number(owner_id),
-            status_id: Number(status_id),
+            owner_id: isEmpty(executorId) ? null : Number(executorId),
+            status_id: Number(statusId),
           });
 
         await app.objection.models.taskLabel.query()
           .where('task_id', task.id)
           .delete();
-        const labelsData = [...label_ids] // eslint-disable-line camelcase
+        const labelsData = [...labelIds] // eslint-disable-line camelcase
           .map((id) => ({ task_id: task.id, label_id: Number(id) }));
         const labelInsertionPromises = labelsData
           .map(async (item) => app.objection.models.taskLabel.query().insert(item));
@@ -157,7 +157,7 @@ export default (app) => {
         const labels = await app.objection.models.label.query();
         req.flash('error', i18next.t('flash.editError'));
         reply.render('tasks/edit', {
-          task, statuses, users, labels, labelIds: label_ids, errors: error.data,
+          task, statuses, users, labels, labelIds, errors: error.data,
         });
         return reply;
       }

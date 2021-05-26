@@ -28,8 +28,8 @@
   "tasks": {
     "new": {
       "name": "Test Task 3",
-      "status_id": "1",
-      "owner_id": "3",
+      "statusId": "1",
+      "executorId": "3",
       "description": "This Task if for testing purposes only."
     },
     "existing": {
