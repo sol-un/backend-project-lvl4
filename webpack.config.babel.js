@@ -32,18 +32,8 @@ module.exports = {
       },
     ],
   },
-  plugins: [new MiniCssExtractPlugin(),
-    (function () { // eslint-disable-line func-names
-      switch (mode) {
-        case 'development':
-          return new Dotenv();
-        case 'production':
-          return new Dotenv({ systemvars: true });
-        case 'test':
-          return new Dotenv({ systemvars: true });
-        default:
-          throw new Error(`Unknown environment variable: ${mode}!`);
-      }
-    }()),
+  plugins: [
+    new MiniCssExtractPlugin(),
+    new Dotenv({ systemvars: true }),
   ],
 };
