@@ -25,6 +25,6 @@ block content
         option(value=`${user.id}` selected=isSelected)= `${user.firstName} ${user.lastName}`
     +select(t('entities.task.labels'), 'labels')(multiple)
       each label in labels
-        - const isSelected = labelIds.includes(label.id);
+        - const isSelected = task.labelIds.some(({ id }) => id === label.id);
         option(value=label.id selected=isSelected)= label.name
     +submit()(value=t('views.edit'))

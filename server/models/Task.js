@@ -1,7 +1,7 @@
 import objection from 'objection';
 import Status from './Status.js';
 import User from './User.js';
-// import Label from './Label.js';
+import Label from './Label.js';
 
 const { Model } = objection;
 
@@ -43,18 +43,18 @@ export default class Task extends Model {
           to: 'users.id',
         },
       },
-      // labels: {
-      //   relation: Model.ManyToManyRelation,
-      //   modelClass: Label,
-      //   join: {
-      //     from: 'tasks.id',
-      //     through: {
-      //       from: 'tasks_labels.task_id',
-      //       to: 'tasks_labels.label_id',
-      //     },
-      //     to: 'labels.id',
-      //   },
-      // },
+      labels: {
+        relation: Model.ManyToManyRelation,
+        modelClass: Label,
+        join: {
+          from: 'tasks.id',
+          through: {
+            from: 'tasks_labels.task_id',
+            to: 'tasks_labels.label_id',
+          },
+          to: 'labels.id',
+        },
+      },
     };
   }
 }

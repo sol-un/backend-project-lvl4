@@ -7,7 +7,7 @@ const predicates = {
     ? task.ownerId.toString() === id
     : false),
   byStatusId: (task, id) => task.statusId.toString() === id,
-  byLabelId: (task, id) => task.labelIds.includes(Number(id)),
+  byLabelId: (task, id) => task.labelIds.some(({ id: labelId }) => labelId === Number(id)),
 };
 
 export default (app) => {
@@ -17,6 +17,12 @@ export default (app) => {
         .join('statuses', 'statuses.id', '=', 'tasks.status_id')
         .join('users as creator', 'creator.id', 'tasks.creator_id')
         .leftJoin('users as owner', 'owner.id', 'tasks.owner_id')
+        .withGraphJoined('labels(selectIds) as labelIds')
+        .modifiers({
+          selectIds(builder) {
+            builder.select('id');
+          },
+        })
         .select(
           'tasks.*',
           'statuses.name as status_name',
@@ -26,16 +32,10 @@ export default (app) => {
           'owner.last_name as owner_last_name',
         );
 
-      const tasksLabels = await app.objection.models.taskLabel.query();
-      const tasksWithLabels = tasks.map((task) => {
-        const labelIds = tasksLabels
-          .reduce((acc, item) => (item.taskId === task.id ? [...acc, item.labelId] : acc), []);
-        return { ...task, labelIds };
-      });
       const filteredTasks = Object.keys(req.query)
         .filter((key) => Number(req.query[key]) > 0)
         .reduce((acc, key) => acc
-          .filter((task) => predicates[key](task, req.query[key])), tasksWithLabels);
+          .filter((task) => predicates[key](task, req.query[key])), tasks);
 
       const statuses = await app.objection.models.status.query();
       const users = await app.objection.models.user.query();
@@ -56,6 +56,12 @@ export default (app) => {
         .join('statuses', 'statuses.id', 'tasks.status_id')
         .join('users as creator', 'creator.id', 'tasks.creator_id')
         .leftJoin('users as owner', 'owner.id', 'tasks.owner_id')
+        .withGraphJoined('labels(selectNames)')
+        .modifiers({
+          selectNames(builder) {
+            builder.select('name');
+          },
+        })
         .select(
           'tasks.id',
           'tasks.name',
@@ -67,11 +73,8 @@ export default (app) => {
           'owner.first_name as owner_first_name',
           'owner.last_name as owner_last_name',
         );
-      const labels = await app.objection.models.taskLabel.query()
-        .where('task_id', task.id)
-        .join('labels', 'labels.id', 'tasks_labels.label_id')
-        .select('labels.name');
-      reply.render('tasks/profile', { task, labels });
+
+      reply.render('tasks/profile', { task });
       return reply;
     })
     .get('/tasks/new', { name: 'newTask', preValidation: app.authenticate }, async (req, reply) => {
@@ -176,17 +179,20 @@ export default (app) => {
       }
     })
     .get('/tasks/:id/edit', { name: 'editTask', preValidation: app.authenticate }, async (req, reply) => {
-      const task = await app.objection.models.task.query().findById(req.params.id);
+      const task = await app.objection.models.task.query()
+        .findById(req.params.id)
+        .withGraphJoined('labels(selectIds) as labelIds')
+        .modifiers({
+          selectIds(builder) {
+            builder.select('id');
+          },
+        });
       const statuses = await app.objection.models.status.query();
       const users = await app.objection.models.user.query();
       const labels = await app.objection.models.label.query();
-      const labelIdObjects = await app.objection.models.taskLabel.query()
-        .where('task_id', task.id)
-        .join('labels', 'labels.id', 'tasks_labels.label_id')
-        .select('labels.id');
-      const labelIds = labelIdObjects.map(({ id }) => id);
+
       reply.render('tasks/edit', {
-        task, statuses, users, labels, labelIds,
+        task, statuses, users, labels,
       });
       return reply;
     });

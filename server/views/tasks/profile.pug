@@ -24,7 +24,7 @@ block content
           .col
             h6=`${t('entities.task.labels')}:`
             ul
-              each label in labels
+              each label in task.labels
                 li= label.name
         .row.p-1
           .col
