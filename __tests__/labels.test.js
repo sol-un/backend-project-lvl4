@@ -1,7 +1,7 @@
 // @ts-check
 
 import getApp from '../server/index.js';
-import { getTestData, prepareData } from './helpers/index.js';
+import { getTestData, prepareData, getCookies } from './helpers/index.js';
 
 describe('test labels CRUD', () => {
   let app;
@@ -19,15 +19,7 @@ describe('test labels CRUD', () => {
   beforeEach(async () => {
     await knex.migrate.latest();
     await prepareData(app);
-
-    const { cookies: [{ name, value }] } = await app.inject({
-      method: 'POST',
-      url: app.reverse('session'),
-      payload: {
-        data: testData.users.existing,
-      },
-    });
-    cookies = { [name]: value };
+    cookies = await getCookies(app, testData);
   });
 
   it('index', async () => {
@@ -36,8 +28,8 @@ describe('test labels CRUD', () => {
       url: app.reverse('labels'),
       cookies,
     });
+
     expect(response.statusCode).toBe(200);
-    expect(await models.status.query()).toHaveLength(2);
   });
 
   it('new', async () => {
@@ -72,11 +64,10 @@ describe('test labels CRUD', () => {
         data: params,
       },
     });
-
     expect(response.statusCode).toBe(302);
 
-    const status = await models.label.query().findOne({ name: params.name });
-    expect(status).toMatchObject(params);
+    const label = await models.label.query().findOne({ name: params.name });
+    expect(label).toMatchObject(params);
   });
 
   it('update', async () => {

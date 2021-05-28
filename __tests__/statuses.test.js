@@ -1,7 +1,7 @@
 // @ts-check
 
 import getApp from '../server/index.js';
-import { getTestData, prepareData } from './helpers/index.js';
+import { getTestData, prepareData, getCookies } from './helpers/index.js';
 
 describe('test statuses CRUD', () => {
   let app;
@@ -19,15 +19,7 @@ describe('test statuses CRUD', () => {
   beforeEach(async () => {
     await knex.migrate.latest();
     await prepareData(app);
-
-    const { cookies: [{ name, value }] } = await app.inject({
-      method: 'POST',
-      url: app.reverse('session'),
-      payload: {
-        data: testData.users.existing,
-      },
-    });
-    cookies = { [name]: value };
+    cookies = await getCookies(app, testData);
   });
 
   it('index', async () => {

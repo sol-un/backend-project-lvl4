@@ -3,7 +3,7 @@
 import _ from 'lodash';
 import getApp from '../server/index.js';
 import encrypt from '../server/lib/secure.js';
-import { getTestData, prepareData } from './helpers/index.js';
+import { getTestData, prepareData, getCookies } from './helpers/index.js';
 
 describe('test users CRUD', () => {
   let app;
@@ -21,15 +21,7 @@ describe('test users CRUD', () => {
   beforeEach(async () => {
     await knex.migrate.latest();
     await prepareData(app);
-
-    const { cookies: [{ name, value }] } = await app.inject({
-      method: 'POST',
-      url: app.reverse('session'),
-      payload: {
-        data: testData.users.existing,
-      },
-    });
-    cookies = { [name]: value };
+    cookies = await getCookies(app, testData);
   });
 
   it('index', async () => {
@@ -39,7 +31,6 @@ describe('test users CRUD', () => {
     });
 
     expect(response.statusCode).toBe(200);
-    expect(await models.user.query()).toHaveLength(3);
   });
 
   it('new', async () => {
@@ -72,8 +63,8 @@ describe('test users CRUD', () => {
         data: params,
       },
     });
-
     expect(response.statusCode).toBe(302);
+
     const expected = {
       ..._.omit(params, 'password'),
       passwordDigest: encrypt(params.password),
@@ -99,6 +90,7 @@ describe('test users CRUD', () => {
       },
     });
     expect(response.statusCode).toBe(302);
+
     const expected = {
       ..._.omit(params, 'password'),
       passwordDigest: encrypt(params.password),
@@ -116,6 +108,7 @@ describe('test users CRUD', () => {
       cookies,
     });
     expect(response.statusCode).toBe(302);
+
     expect(await models.user.query().findById(id)).toBeUndefined();
   });
 

@@ -18,3 +18,14 @@ export const prepareData = async (app) => {
   await knex('labels').insert(getFixtureData('labels.json'));
   await knex('tasks_labels').insert(getFixtureData('tasks_labels.json'));
 };
+
+export const getCookies = async (app, testData) => {
+  const { cookies: [{ name, value }] } = await app.inject({
+    method: 'POST',
+    url: app.reverse('session'),
+    payload: {
+      data: testData.users.existing,
+    },
+  });
+  return { [name]: value };
+};

@@ -1,7 +1,7 @@
 // @ts-check
 
 import getApp from '../server/index.js';
-import { getTestData, prepareData } from './helpers/index.js';
+import { getTestData, prepareData, getCookies } from './helpers/index.js';
 
 describe('test tasks CRUD', () => {
   let app;
@@ -19,15 +19,7 @@ describe('test tasks CRUD', () => {
   beforeEach(async () => {
     await knex.migrate.latest();
     await prepareData(app);
-
-    const { cookies: [{ name, value }] } = await app.inject({
-      method: 'POST',
-      url: app.reverse('session'),
-      payload: {
-        data: testData.users.existing,
-      },
-    });
-    cookies = { [name]: value };
+    cookies = await getCookies(app, testData);
   });
 
   it('index', async () => {
@@ -36,8 +28,8 @@ describe('test tasks CRUD', () => {
       url: app.reverse('tasks'),
       cookies,
     });
+
     expect(response.statusCode).toBe(200);
-    expect(await models.task.query()).toHaveLength(2);
   });
 
   it('new', async () => {
@@ -72,12 +64,20 @@ describe('test tasks CRUD', () => {
         data: params,
       },
     });
-
     expect(response.statusCode).toBe(302);
-    const task = await models.task.query().findOne({ name: params.name });
+
+    const task = await models.task.query()
+      .findOne({ name: params.name })
+      .withGraphJoined('labels(selectIds) as labelIds')
+      .modifiers({
+        selectIds(builder) {
+          builder.select('id');
+        },
+      });
     expect(task.statusId.toString()).toBe(params.statusId);
     expect(task.ownerId.toString()).toBe(params.executorId);
     expect(task.description).toBe(params.description);
+    expect(task.labelIds.map(({ id }) => id.toString())).toEqual(params.labels);
   });
 
   it('update', async () => {
@@ -88,6 +88,7 @@ describe('test tasks CRUD', () => {
       executorId: '2',
       name: 'Task Name Updated',
       description: 'New description.',
+      labels: ['1', '2'],
     };
 
     const response = await app.inject({
@@ -100,11 +101,18 @@ describe('test tasks CRUD', () => {
     });
     expect(response.statusCode).toBe(302);
 
-    const task = await models.task.query().findById(initialTask.id);
+    const task = await models.task.query()
+      .findById(initialTask.id).withGraphJoined('labels(selectIds) as labelIds')
+      .modifiers({
+        selectIds(builder) {
+          builder.select('id');
+        },
+      });
     expect(task.statusId.toString()).toBe(params.statusId);
     expect(task.ownerId.toString()).toBe(params.executorId);
     expect(task.name).toBe(params.name);
     expect(task.description).toBe(params.description);
+    expect(task.labelIds.map(({ id }) => id.toString())).toEqual(params.labels);
   });
 
   it('delete', async () => {
@@ -118,6 +126,7 @@ describe('test tasks CRUD', () => {
     expect(response.statusCode).toBe(302);
 
     expect(await models.task.query().findById(id)).toBeUndefined();
+    expect(await models.taskLabel.query().findOne({ task_id: id })).toBeUndefined();
   });
 
   afterEach(async () => {

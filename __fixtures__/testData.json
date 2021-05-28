@@ -30,7 +30,11 @@
       "name": "Test Task 3",
       "statusId": "1",
       "executorId": "3",
-      "description": "This Task if for testing purposes only."
+      "description": "This Task if for testing purposes only.",
+      "labels": [
+        "1",
+        "2"
+      ]
     },
     "existing": {
       "name": "Test Task"

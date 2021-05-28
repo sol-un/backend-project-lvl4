@@ -1,7 +1,7 @@
 // @ts-check
 
 import getApp from '../server/index.js';
-import { getTestData, prepareData } from './helpers/index.js';
+import { getTestData, prepareData, getCookies } from './helpers/index.js';
 
 describe('test session', () => {
   let app;
@@ -16,14 +16,16 @@ describe('test session', () => {
     testData = getTestData();
   });
 
-  it('test sign in / sign out', async () => {
+  it('new', async () => {
     const response = await app.inject({
       method: 'GET',
       url: app.reverse('newSession'),
     });
 
     expect(response.statusCode).toBe(200);
+  });
 
+  it('sign in', async () => {
     const responseSignIn = await app.inject({
       method: 'POST',
       url: app.reverse('session'),
@@ -33,14 +35,15 @@ describe('test session', () => {
     });
 
     expect(responseSignIn.statusCode).toBe(302);
-    const [sessionCookie] = responseSignIn.cookies;
-    const { name, value } = sessionCookie;
-    const cookie = { [name]: value };
+  });
+
+  it('sign out', async () => {
+    const cookies = getCookies(app, testData);
 
     const responseSignOut = await app.inject({
       method: 'DELETE',
       url: app.reverse('session'),
-      cookies: cookie,
+      cookies,
     });
 
     expect(responseSignOut.statusCode).toBe(302);
