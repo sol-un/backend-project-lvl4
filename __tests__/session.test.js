@@ -1,7 +1,7 @@
 // @ts-check
 
 import getApp from '../server/index.js';
-import { getTestData, prepareData, getCookies } from './helpers/index.js';
+import { getTestData, prepareData, logIn } from './helpers/index.js';
 
 describe('test session', () => {
   let app;
@@ -38,7 +38,7 @@ describe('test session', () => {
   });
 
   it('sign out', async () => {
-    const cookies = getCookies(app, testData);
+    const cookies = logIn(app, testData.users.existing);
 
     const responseSignOut = await app.inject({
       method: 'DELETE',

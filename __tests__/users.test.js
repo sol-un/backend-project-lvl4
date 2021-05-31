@@ -3,7 +3,7 @@
 import _ from 'lodash';
 import getApp from '../server/index.js';
 import encrypt from '../server/lib/secure.js';
-import { getTestData, prepareData, getCookies } from './helpers/index.js';
+import { getTestData, prepareData, logIn } from './helpers/index.js';
 
 describe('test users CRUD', () => {
   let app;
@@ -21,7 +21,7 @@ describe('test users CRUD', () => {
   beforeEach(async () => {
     await knex.migrate.latest();
     await prepareData(app);
-    cookies = await getCookies(app, testData);
+    cookies = await logIn(app, testData.users.existing);
   });
 
   it('index', async () => {
