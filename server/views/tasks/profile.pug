@@ -10,13 +10,13 @@ block content
       .container
         .row.p-1
           .col=t('entities.task.creator')
-          .col=`${task.creatorFirstName} ${task.creatorLastName}`
+          .col=task.creator.name
         .row.p-1
           .col=t('entities.task.owner')
-          .col=`${task.ownerFirstName || ''} ${task.ownerLastName || ''}`
+          .col=task.owner && task.owner.name
         .row.p-1
           .col=t('entities.task.status')
-          .col=task.statusName
+          .col=task.status.name
         .row.p-1
           .col=t('entities.createdAt')
           .col=task.createdAt
@@ -24,7 +24,7 @@ block content
           .col
             h6=`${t('entities.task.labels')}:`
             ul
-              each label in task.labels
+              each label in task.labelNames
                 li= label.name
         .row.p-1
           .col

@@ -20,9 +20,10 @@ block content
         - const isSelected = status.id === task.statusId;
         option(value=`${status.id}` selected=isSelected)= status.name
     +select(t('entities.task.owner'), 'executorId')
+      option(isSelected=!task.ownerId)
       each user in users
         - const isSelected = user.id === task.ownerId;
-        option(value=`${user.id}` selected=isSelected)= `${user.firstName} ${user.lastName}`
+        option(value=`${user.id}` selected=isSelected)= user.name
     +select(t('entities.task.labels'), 'labels')(multiple)
       each label in labels
         - const isSelected = task.labelIds.some(({ id }) => id === label.id);

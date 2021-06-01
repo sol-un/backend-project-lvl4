@@ -1,4 +1,5 @@
 import i18next from 'i18next';
+import { isEmpty } from 'lodash';
 
 export default (app) => {
   app
@@ -27,13 +28,7 @@ export default (app) => {
     .patch('/labels/:id', { name: 'updateLabel', preValidation: app.authenticate }, async (req, reply) => {
       const label = await app.objection.models.label.query().findById(req.params.id);
       try {
-        const {
-          name,
-        } = req.body.data;
-        await label.$query()
-          .update({
-            name,
-          });
+        await label.$query().update(req.body.data);
         req.flash('info', i18next.t('flash.labels.edit.success'));
         reply.redirect(app.reverse('labels'));
         return reply;
@@ -44,11 +39,17 @@ export default (app) => {
       }
     })
     .delete('/labels/:id', { name: 'deleteLabel', preValidation: app.authenticate }, async (req, reply) => {
+      const label = await app.objection.models.label.query().findById(req.params.id);
+      const relatedTasks = await label.$relatedQuery('tasks');
+
+      if (!isEmpty(relatedTasks)) {
+        req.flash('error', i18next.t('flash.labels.delete.error'));
+        reply.redirect(app.reverse('labels'));
+        return reply;
+      }
+
       try {
-        await app.objection.models.taskLabel.query()
-          .where('label_id', req.params.id)
-          .delete();
-        await app.objection.models.label.query().deleteById(req.params.id);
+        await label.$query().delete();
         req.flash('info', i18next.t('flash.labels.delete.success'));
         reply.redirect(app.reverse('labels'));
         return reply;

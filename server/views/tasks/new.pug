@@ -22,7 +22,7 @@ block content
       option
       each user in users
         - const isSelected = user.id === task.owner_id;
-        option(value=`${user.id}` selected=isSelected)= `${user.firstName} ${user.lastName}`
+        option(value=`${user.id}` selected=isSelected)= user.name
     +select(t('entities.task.labels'), 'labels')(multiple)
       each label in labels
         - const isSelected = labelIds && labelIds.includes(label.id.toString());

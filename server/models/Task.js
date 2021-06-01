@@ -43,6 +43,14 @@ export default class Task extends Model {
           to: 'users.id',
         },
       },
+      owner: {
+        relation: Model.BelongsToOneRelation,
+        modelClass: User,
+        join: {
+          from: 'tasks.owner_id',
+          to: 'users.id',
+        },
+      },
       labels: {
         relation: Model.ManyToManyRelation,
         modelClass: Label,

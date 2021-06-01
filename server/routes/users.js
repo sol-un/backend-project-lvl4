@@ -1,6 +1,7 @@
 // @ts-check
 
 import i18next from 'i18next';
+import { isEmpty } from 'lodash';
 
 export default (app) => {
   app
@@ -32,18 +33,9 @@ export default (app) => {
         reply.redirect(app.reverse('users'));
         return reply;
       }
+      const user = await app.objection.models.user.query().findById(req.user.id);
       try {
-        const {
-          firstName, lastName, email, password,
-        } = req.body.data;
-        const user = await app.objection.models.user.query().findById(req.user.id);
-        await user.$query()
-          .update({
-            firstName,
-            lastName,
-            email,
-            password,
-          });
+        await user.$query().update(req.body.data);
         req.flash('info', i18next.t('flash.users.edit.success'));
         reply.redirect(app.reverse('users'));
         return reply;
@@ -60,16 +52,18 @@ export default (app) => {
         return reply;
       }
 
-      const relatedTasks = await app.objection.models.task.query()
-        .where('creator_id', req.user.id).orWhere('owner_id', req.user.id);
-      if (relatedTasks.length > 0) {
+      const user = await app.objection.models.user.query().findById(req.user.id);
+      const createdTasks = await user.$relatedQuery('createdTasks');
+      const ownedTasks = await user.$relatedQuery('ownedTasks');
+
+      if (!isEmpty(createdTasks) || !isEmpty(ownedTasks)) {
         req.flash('error', i18next.t('flash.users.delete.error'));
         reply.redirect(app.reverse('users'));
         return reply;
       }
 
       try {
-        await app.objection.models.user.query().deleteById(req.user.id);
+        await user.$query().delete();
         req.logOut();
         req.flash('info', i18next.t('flash.users.delete.success'));
         reply.redirect(app.reverse('users'));

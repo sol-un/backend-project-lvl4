@@ -1,5 +1,6 @@
 // @ts-check
 
+import path from 'path';
 import { Model } from 'objection';
 import objectionUnique from 'objection-unique';
 
@@ -24,6 +25,35 @@ export default class User extends unique(Model) {
         password: { type: 'string', minLength: 3 },
       },
     };
+  }
+
+  static get relationMappings() {
+    return {
+      createdTasks: {
+        relation: Model.HasManyRelation,
+        modelClass: path.join(__dirname, 'Task.js'),
+        join: {
+          from: 'users.id',
+          to: 'tasks.creator_id',
+        },
+      },
+      ownedTasks: {
+        relation: Model.HasManyRelation,
+        modelClass: path.join(__dirname, 'Task.js'),
+        join: {
+          from: 'users.id',
+          to: 'tasks.owner_id',
+        },
+      },
+    };
+  }
+
+  static get virtualAttributes() {
+    return ['name'];
+  }
+
+  get name() {
+    return `${this.firstName} ${this.lastName}`;
   }
 
   set password(value) {

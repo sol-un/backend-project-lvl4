@@ -1,4 +1,5 @@
 import i18next from 'i18next';
+import { isEmpty } from 'lodash';
 
 export default (app) => {
   app
@@ -27,13 +28,7 @@ export default (app) => {
     .patch('/statuses/:id', { name: 'updateStatus', preValidation: app.authenticate }, async (req, reply) => {
       const status = await app.objection.models.status.query().findById(req.params.id);
       try {
-        const {
-          name,
-        } = req.body.data;
-        await status.$query()
-          .update({
-            name,
-          });
+        await status.$query().update(req.body.data);
         req.flash('info', i18next.t('flash.statuses.edit.success'));
         reply.redirect(app.reverse('statuses'));
         return reply;
@@ -44,16 +39,17 @@ export default (app) => {
       }
     })
     .delete('/statuses/:id', { name: 'deleteStatus', preValidation: app.authenticate }, async (req, reply) => {
-      const relatedTasks = await app.objection.models.task
-        .query()
-        .where('status_id', req.params.id);
-      if (relatedTasks.length > 0) {
+      const status = await app.objection.models.status.query().findById(req.params.id);
+      const relatedTasks = await status.$relatedQuery('tasks');
+
+      if (!isEmpty(relatedTasks)) {
         req.flash('error', i18next.t('flash.statuses.delete.error'));
         reply.redirect(app.reverse('statuses'));
         return reply;
       }
+
       try {
-        await app.objection.models.status.query().deleteById(req.params.id);
+        await status.$query().delete();
         req.flash('info', i18next.t('flash.statuses.delete.success'));
         reply.redirect(app.reverse('statuses'));
         return reply;
