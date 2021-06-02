@@ -100,8 +100,11 @@ describe('test users CRUD', () => {
   });
 
   it('delete', async () => {
-    const { id } = await models.user.query().findOne({ email: testData.users.existing.email });
+    const user = await models.user.query().findOne({ email: testData.users.existing.email });
+    await user.$relatedQuery('createdTasks').delete();
+    await user.$relatedQuery('ownedTasks').delete();
 
+    const { id } = user;
     const response = await app.inject({
       method: 'DELETE',
       url: app.reverse('deleteUser', { id }),

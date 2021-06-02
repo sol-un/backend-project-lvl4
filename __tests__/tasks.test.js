@@ -116,8 +116,10 @@ describe('test tasks CRUD', () => {
   });
 
   it('delete', async () => {
-    const { id } = await models.task.query().findOne({ name: testData.tasks.existing.name });
+    const task = await models.task.query().findOne({ name: testData.tasks.existing.name });
+    expect(await task.$relatedQuery('labels')).toHaveLength(1);
 
+    const { id } = task;
     const response = await app.inject({
       method: 'DELETE',
       url: app.reverse('deleteTask', { id }),
@@ -126,7 +128,7 @@ describe('test tasks CRUD', () => {
     expect(response.statusCode).toBe(302);
 
     expect(await models.task.query().findById(id)).toBeUndefined();
-    expect(await models.taskLabel.query().findOne({ task_id: id })).toBeUndefined();
+    expect(await task.$relatedQuery('labels')).toHaveLength(0);
   });
 
   afterEach(async () => {

@@ -90,8 +90,10 @@ describe('test labels CRUD', () => {
   });
 
   it('delete', async () => {
-    const { id } = await models.label.query().findOne({ name: testData.labels.existing.name });
+    const label = await models.label.query().findOne({ name: testData.labels.existing.name });
+    await label.$relatedQuery('tasks').unrelate();
 
+    const { id } = label;
     const response = await app.inject({
       method: 'DELETE',
       url: app.reverse('deleteLabel', { id }),
