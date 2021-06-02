@@ -3,21 +3,10 @@ extends ../layouts/application.pug
 block content
   a.btn.btn-primary.mb-3(role='button' href=route('newTask'))=t('views.tasks.newLink')
   form(action=route('tasks') method='get')
-    +select(t('entities.task.status'), 'status')(name='byStatusId')
-      option
-      each status in statuses
-        - const isSelected = status.id.toString() === query.byStatusId;
-        option(value=`${status.id}` selected=isSelected)= status.name
-    +select(t('entities.task.owner'), 'executor')(name='byOwnerId')
-      option
-      each user in users
-        - const isSelected = user.id.toString() === query.byOwnerId;
-        option(value=`${user.id}` selected=isSelected)= `${user.firstName} ${user.lastName}`
-    +select(t('views.tasks.label'), 'label')(name='byLabelId')
-      option
-      each label in labels
-        - const isSelected = label.id.toString() === query.byLabelId;
-        option(value=label.id selected=isSelected)= label.name
+    - const options = { firstOptionEmpty: true };
+    +select(statuses, t('entities.task.status'), 'status', shouldBeSelected(query.byStatusId), options)(name='byStatusId')
+    +select(users, t('entities.task.owner'), 'executor', shouldBeSelected(query.byOwnerId), options)(name='byOwnerId')
+    +select(labels, t('views.tasks.label'), 'label', shouldBeSelected(query.byLabelId), options)(name='byLabelId')
     .form-group.form-check
       - const isSelected = Boolean(query.byCreatorId);
       input#byCreatorId.form-check-input(type='checkbox' name='byCreatorId' value=creatorId checked=isSelected)

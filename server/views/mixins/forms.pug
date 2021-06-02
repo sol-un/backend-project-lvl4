@@ -33,7 +33,7 @@ mixin buttonTo(action, method)
     input(name="_method" type="hidden" value=method)
     input(type='submit')&attributes(attributes)
 
-mixin select(labelText, propertyName)
+mixin select(entities, labelText, propertyName, shouldBeSelected = () => false, options = {})
   - inputId = getInputId(propertyName)
   .form-group
     label(
@@ -44,4 +44,8 @@ mixin select(labelText, propertyName)
       name=getInputName(propertyName)
       class='form-control'
     )&attributes(attributes)
-      block
+      if (options.firstOptionEmpty)
+        option
+      each entity in entities
+        - const isSelected = shouldBeSelected(entity.id);
+        option(value=`${entity.id}` selected=isSelected)= entity.name

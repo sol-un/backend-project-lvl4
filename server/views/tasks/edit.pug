@@ -15,17 +15,7 @@ block content
         name="data[description]"
         class="form-control"
       )= task.description
-    +select(t('entities.task.status'), 'statusId')
-      each status in statuses
-        - const isSelected = status.id === task.statusId;
-        option(value=`${status.id}` selected=isSelected)= status.name
-    +select(t('entities.task.owner'), 'executorId')
-      option(isSelected=!task.ownerId)
-      each user in users
-        - const isSelected = user.id === task.ownerId;
-        option(value=`${user.id}` selected=isSelected)= user.name
-    +select(t('entities.task.labels'), 'labels')(multiple)
-      each label in labels
-        - const isSelected = task.labelIds.some(({ id }) => id === label.id);
-        option(value=label.id selected=isSelected)= label.name
+    +select(statuses, t('entities.task.status'), 'statusId', shouldBeSelected(task.statusId || task.status_id))
+    +select(users, t('entities.task.owner'), 'executorId', shouldBeSelected(task.ownerId || task.owner_id), { firstOptionEmpty: true })
+    +select(labels, t('entities.task.labels'), 'labels', shouldBeSelected(labelIds || task.labelIds.map(({ id }) => id)))(multiple)
     +submit()(value=t('views.edit'))
