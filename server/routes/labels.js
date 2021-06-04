@@ -20,7 +20,7 @@ export default (app) => {
         reply.redirect(app.reverse('labels'));
         return reply;
       } catch (error) {
-        req.flash('error', i18next.t('flash.createError'));
+        req.flash('error', i18next.t('flash.labels.create.error'));
         reply.render('labels/new', { label: req.body.data, errors: error.data });
         return reply;
       }

@@ -49,6 +49,7 @@ module.exports = {
       statuses: {
         create: {
           success: 'Статус успешно создан',
+          error: 'Не удалось создать статус',
         },
         edit: {
           success: 'Статус успешно изменён',
@@ -61,6 +62,7 @@ module.exports = {
       labels: {
         create: {
           success: 'Метка успешно создана',
+          error: 'Не удалось создать метку',
         },
         edit: {
           success: 'Метка успешно изменена',
@@ -74,6 +76,7 @@ module.exports = {
         IDerror: 'Задачу может удалить только её автор',
         create: {
           success: 'Задача успешно создана',
+          error: 'Не удалось создать задачу',
         },
         edit: {
           success: 'Задача успешно изменена',
@@ -83,7 +86,6 @@ module.exports = {
         },
       },
       editError: 'Не удалось изменить',
-      createError: 'Не удалось создать',
       authError: 'Доступ запрещён! Пожалуйста, авторизируйтесь.',
     },
     layouts: {

@@ -79,7 +79,7 @@ export default (app) => {
         name,
         description,
         owner_id: isEmpty(executorId) ? null : Number(executorId),
-        status_id: Number(statusId),
+        status_id: isEmpty(statusId) ? null : Number(statusId),
         creator_id: Number(req.user.id),
       };
 
@@ -102,7 +102,7 @@ export default (app) => {
         const statuses = await app.objection.models.status.query();
         const users = await app.objection.models.user.query();
         const labels = await app.objection.models.label.query();
-        req.flash('error', i18next.t('flash.createError'));
+        req.flash('error', i18next.t('flash.tasks.create.error'));
         reply.render('tasks/new', {
           task: taskData, statuses, users, labels, labelIds, errors: error.data,
         });
