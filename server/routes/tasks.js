@@ -1,19 +1,14 @@
 import i18next from 'i18next';
 import { isEmpty } from 'lodash';
 
-const predicates = {
-  byCreatorId: (task, id) => task.creatorId.toString() === id,
-  byOwnerId: (task, id) => (task.ownerId
-    ? task.ownerId.toString() === id
-    : false),
-  byStatusId: (task, id) => task.statusId.toString() === id,
-  byLabelId: (task, id) => task.labelIds.some(({ id: labelId }) => labelId === Number(id)),
-};
-
 export default (app) => {
   app
     .get('/tasks', { name: 'tasks', preValidation: app.authenticate }, async (req, reply) => {
-      const tasks = await app.objection.models.task.query()
+      const {
+        creatorId, ownerId, statusId, labelId,
+      } = req.query;
+
+      const query = app.objection.models.task.query()
         .withGraphJoined(`[
           status(selectName),
           creator,
@@ -21,10 +16,23 @@ export default (app) => {
           labels(selectId) as labelIds
         ]`);
 
-      const filteredTasks = Object.keys(req.query)
-        .filter((key) => Number(req.query[key]) > 0)
-        .reduce((acc, key) => acc
-          .filter((task) => predicates[key](task, req.query[key])), tasks);
+      if (creatorId) {
+        query.modify('filterByCreatorId', creatorId);
+      }
+      if (ownerId) {
+        query.modify('filterByOwnerId', ownerId);
+      }
+      if (statusId) {
+        query.modify('filterByStatusId', statusId);
+      }
+
+      const tasks = await query;
+
+      const filteredTasks = labelId
+        ? tasks
+          .filter(({ labelIds }) => labelIds
+            .some(({ id }) => id === Number(labelId)))
+        : tasks;
 
       const statuses = await app.objection.models.status.query();
       const users = await app.objection.models.user.query();

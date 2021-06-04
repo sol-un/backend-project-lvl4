@@ -4,13 +4,13 @@ block content
   a.btn.btn-primary.mb-3(role='button' href=route('newTask'))=t('views.tasks.newLink')
   form(action=route('tasks') method='get')
     - const options = { firstOptionEmpty: true };
-    +select(statuses, t('entities.task.status'), 'status', shouldBeSelected(query.byStatusId), options)(name='byStatusId')
-    +select(users, t('entities.task.owner'), 'executor', shouldBeSelected(query.byOwnerId), options)(name='byOwnerId')
-    +select(labels, t('views.tasks.label'), 'label', shouldBeSelected(query.byLabelId), options)(name='byLabelId')
+    +select(statuses, t('entities.task.status'), 'status', shouldBeSelected(query.statusId), options)(name='statusId')
+    +select(users, t('entities.task.owner'), 'executor', shouldBeSelected(query.ownerId), options)(name='ownerId')
+    +select(labels, t('views.tasks.label'), 'label', shouldBeSelected(query.labelId), options)(name='labelId')
     .form-group.form-check
-      - const isSelected = Boolean(query.byCreatorId);
-      input#byCreatorId.form-check-input(type='checkbox' name='byCreatorId' value=creatorId checked=isSelected)
-      label.form-check-label(for='byCreatorId')= t('views.tasks.myTasks')
+      - const isSelected = Boolean(query.creatorId);
+      input#creatorId.form-check-input(type='checkbox' name='creatorId' value=creatorId checked=isSelected)
+      label.form-check-label(for='creatorId')= t('views.tasks.myTasks')
     +submit()(value=t('views.tasks.showFiltered'))
       a.btn.btn-primary.ml-2(role='button' href=route('tasks'))=t('views.tasks.clearFilters')
   table.table.table-striped

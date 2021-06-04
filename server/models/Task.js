@@ -65,4 +65,21 @@ export default class Task extends Model {
       },
     };
   }
+
+  static get modifiers() {
+    return {
+      filterByCreatorId(builder, creatorId) {
+        builder
+          .where({ creatorId });
+      },
+      filterByOwnerId(builder, ownerId) {
+        builder
+          .where({ ownerId });
+      },
+      filterByStatusId(builder, statusId) {
+        builder
+          .where({ statusId });
+      },
+    };
+  }
 }
