@@ -80,6 +80,10 @@ export default class Task extends Model {
         builder
           .where({ statusId });
       },
+      findByLabel(builder, labelId) {
+        builder
+          .where({ labelId });
+      },
     };
   }
 }

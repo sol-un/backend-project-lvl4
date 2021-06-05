@@ -25,20 +25,17 @@ export default (app) => {
       if (statusId) {
         query.modify('filterByStatusId', statusId);
       }
+      if (labelId) {
+        query.modify('findByLabel', labelId);
+      }
 
       const tasks = await query;
-
-      const filteredTasks = labelId
-        ? tasks
-          .filter(({ labelIds }) => labelIds
-            .some(({ id }) => id === Number(labelId)))
-        : tasks;
 
       const statuses = await app.objection.models.status.query();
       const users = await app.objection.models.user.query();
       const labels = await app.objection.models.label.query();
       reply.render('tasks/index', {
-        tasks: filteredTasks,
+        tasks,
         creatorId: req.user.id,
         query: req.query,
         statuses,
