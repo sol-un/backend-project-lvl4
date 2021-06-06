@@ -7,14 +7,11 @@ const mode = process.env.NODE_ENV || 'development';
 module.exports = {
   mode,
   devtool: 'source-map',
-  // entry: path.join(__dirname, 'src', 'index.js'),
   output: {
     path: path.join(__dirname, 'dist', 'public'),
-    // publicPath: '/assets/',
   },
   devServer: {
     host: 'localhost',
-    // contentBase: path.join(__dirname, 'dist', 'public'),
     publicPath: '/assets/',
     port: 8080,
     compress: true,
