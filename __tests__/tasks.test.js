@@ -77,11 +77,11 @@ describe('test tasks CRUD', () => {
   });
 
   it('update', async () => {
-    const { creatorId, id } = await models.task
+    const { id } = await models.task
       .query()
       .findOne({ name: testData.tasks.existing.name });
 
-    const params = { ...testData.tasks.new, creatorId };
+    const params = { ...testData.tasks.new };
 
     const response = await app.inject({
       method: 'PATCH',
