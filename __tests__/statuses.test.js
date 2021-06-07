@@ -29,7 +29,6 @@ describe('test statuses CRUD', () => {
       cookies,
     });
     expect(response.statusCode).toBe(200);
-    expect(await models.status.query()).toHaveLength(2);
   });
 
   it('new', async () => {
@@ -73,8 +72,7 @@ describe('test statuses CRUD', () => {
 
   it('update', async () => {
     const { id } = await models.status.query().findOne({ name: testData.statuses.existing.name });
-
-    const params = { name: 'Status Name Updated' };
+    const params = testData.statuses.new;
 
     const response = await app.inject({
       method: 'PATCH',

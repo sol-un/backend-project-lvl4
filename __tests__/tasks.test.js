@@ -1,5 +1,6 @@
 // @ts-check
 
+import { unset } from 'lodash';
 import getApp from '../server/index.js';
 import { getTestData, prepareData, logIn } from './helpers/index.js';
 
@@ -55,7 +56,7 @@ describe('test tasks CRUD', () => {
   });
 
   it('create', async () => {
-    const params = testData.tasks.new;
+    const params = { ...testData.tasks.new };
     const response = await app.inject({
       method: 'POST',
       url: app.reverse('tasks'),
@@ -66,34 +67,25 @@ describe('test tasks CRUD', () => {
     });
     expect(response.statusCode).toBe(302);
 
-    const task = await models.task.query()
-      .findOne({ name: params.name })
-      .withGraphJoined('labels(selectIds) as labelIds')
-      .modifiers({
-        selectIds(builder) {
-          builder.select('id');
-        },
-      });
-    expect(task.statusId.toString()).toBe(params.statusId);
-    expect(task.ownerId.toString()).toBe(params.executorId);
-    expect(task.description).toBe(params.description);
-    expect(task.labelIds.map(({ id }) => id.toString())).toEqual(params.labels);
+    const task = await models.task.query().findOne({ name: params.name });
+    const taskLabels = await task.$relatedQuery('labels');
+    const expectedLabels = await models.label.query().findByIds(params.labels);
+    unset(params, 'labels');
+
+    expect(task).toMatchObject(params);
+    expect(taskLabels).toMatchObject(expectedLabels);
   });
 
   it('update', async () => {
-    const initialTask = await models.task.query().findOne({ name: testData.tasks.existing.name });
-    const params = {
-      creatorId: initialTask.creatorId,
-      statusId: '1',
-      executorId: '2',
-      name: 'Task Name Updated',
-      description: 'New description.',
-      labels: ['1', '2'],
-    };
+    const { creatorId, id } = await models.task
+      .query()
+      .findOne({ name: testData.tasks.existing.name });
+
+    const params = { ...testData.tasks.new, creatorId };
 
     const response = await app.inject({
       method: 'PATCH',
-      url: app.reverse('updateTask', { id: initialTask.id }),
+      url: app.reverse('updateTask', { id }),
       cookies,
       payload: {
         data: params,
@@ -101,23 +93,18 @@ describe('test tasks CRUD', () => {
     });
     expect(response.statusCode).toBe(302);
 
-    const task = await models.task.query()
-      .findById(initialTask.id).withGraphJoined('labels(selectIds) as labelIds')
-      .modifiers({
-        selectIds(builder) {
-          builder.select('id');
-        },
-      });
-    expect(task.statusId.toString()).toBe(params.statusId);
-    expect(task.ownerId.toString()).toBe(params.executorId);
-    expect(task.name).toBe(params.name);
-    expect(task.description).toBe(params.description);
-    expect(task.labelIds.map(({ id }) => id.toString())).toEqual(params.labels);
+    const task = await models.task.query().findOne({ name: params.name });
+    const taskLabels = await task.$relatedQuery('labels');
+    const expectedLabels = await models.label.query().findByIds(params.labels);
+    unset(params, 'labels');
+
+    expect(task).toMatchObject(params);
+    expect(taskLabels).toMatchObject(expectedLabels);
   });
 
   it('delete', async () => {
     const task = await models.task.query().findOne({ name: testData.tasks.existing.name });
-    expect(await task.$relatedQuery('labels')).toHaveLength(1);
+    const taskLabels = await task.$relatedQuery('labels');
 
     const { id } = task;
     const response = await app.inject({
@@ -128,7 +115,10 @@ describe('test tasks CRUD', () => {
     expect(response.statusCode).toBe(302);
 
     expect(await models.task.query().findById(id)).toBeUndefined();
-    expect(await task.$relatedQuery('labels')).toHaveLength(0);
+    taskLabels.forEach(async (label) => {
+      const labelTasks = label.$relatedQuery('tasks');
+      expect(await labelTasks.where({ taskId: id })).toHaveLength(0);
+    });
   });
 
   afterEach(async () => {

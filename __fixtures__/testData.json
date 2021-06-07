@@ -28,16 +28,19 @@
   "tasks": {
     "new": {
       "name": "Test Task 3",
-      "statusId": "1",
-      "executorId": "3",
-      "description": "This Task if for testing purposes only.",
+      "statusId": 1,
+      "executorId": 3,
+      "description": "This Task is for testing purposes only.",
       "labels": [
         "1",
         "2"
       ]
     },
     "existing": {
-      "name": "Test Task"
+      "name": "Test Task",
+      "statusId": 2,
+      "creatorId": 2,
+      "executorId": 3
     }
   }
 }

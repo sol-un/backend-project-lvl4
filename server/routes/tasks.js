@@ -75,8 +75,8 @@ export default (app) => {
       const taskData = {
         name,
         description,
-        executor_id: isEmpty(executorId) ? null : Number(executorId),
-        status_id: isEmpty(statusId) ? null : Number(statusId),
+        executor_id: isEmpty(executorId.toString()) ? null : Number(executorId),
+        status_id: isEmpty(statusId.toString()) ? null : Number(statusId),
         creator_id: Number(req.user.id),
       };
 
@@ -116,7 +116,7 @@ export default (app) => {
         id: Number(req.params.id),
         name,
         description,
-        executor_id: isEmpty(executorId) ? null : Number(executorId),
+        executor_id: isEmpty(executorId.toString()) ? null : Number(executorId),
         status_id: Number(statusId),
         creator_id: Number(req.user.id),
       };

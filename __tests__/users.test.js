@@ -76,10 +76,7 @@ describe('test users CRUD', () => {
   it('update', async () => {
     const { id } = await models.user.query().findOne({ email: testData.users.existing.email });
 
-    const params = {
-      ...testData.users.existing,
-      email: 'email_updated@test.com',
-    };
+    const params = testData.users.new;
 
     const response = await app.inject({
       method: 'PATCH',

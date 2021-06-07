@@ -73,7 +73,7 @@ describe('test labels CRUD', () => {
   it('update', async () => {
     const { id } = await models.label.query().findOne({ name: testData.labels.existing.name });
 
-    const params = { name: 'Label Name Updated' };
+    const params = testData.labels.new;
 
     const response = await app.inject({
       method: 'PATCH',
