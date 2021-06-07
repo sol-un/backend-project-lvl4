@@ -22,12 +22,12 @@ exports.up = (knex) => (
       table.string('description');
       table.integer('status_id');
       table.integer('creator_id');
-      table.integer('owner_id');
+      table.integer('executor_id');
       table.timestamps(true, true);
 
       table.foreign('status_id').references('id').inTable('statuses');
       table.foreign('creator_id').references('id').inTable('users');
-      table.foreign('owner_id').references('id').inTable('users');
+      table.foreign('executor_id').references('id').inTable('users');
     })
     .createTable('labels', (table) => {
       table.increments('id').primary();

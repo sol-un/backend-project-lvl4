@@ -19,7 +19,7 @@ export default class Task extends Model {
         name: { type: 'string', minLength: 1 },
         description: { type: 'string' },
         status_id: { type: 'integer' },
-        owner_id: { type: ['integer', 'null'] },
+        executor_id: { type: ['integer', 'null'] },
         creator_id: { type: 'integer' },
       },
     };
@@ -43,11 +43,11 @@ export default class Task extends Model {
           to: 'users.id',
         },
       },
-      owner: {
+      executor: {
         relation: Model.BelongsToOneRelation,
         modelClass: User,
         join: {
-          from: 'tasks.owner_id',
+          from: 'tasks.executor_id',
           to: 'users.id',
         },
       },
@@ -72,9 +72,9 @@ export default class Task extends Model {
         builder
           .where({ creatorId });
       },
-      filterByOwnerId(builder, ownerId) {
+      filterByExecutorId(builder, executorId) {
         builder
-          .where({ ownerId });
+          .where({ executorId });
       },
       filterByStatusId(builder, statusId) {
         builder

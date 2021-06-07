@@ -5,7 +5,7 @@ block content
   form(action=route('tasks') method='get')
     - const options = { firstOptionEmpty: true };
     +select(statuses, t('entities.task.status'), 'status', shouldBeSelected(query.statusId), options)(name='statusId')
-    +select(users, t('entities.task.owner'), 'executor', shouldBeSelected(query.ownerId), options)(name='ownerId')
+    +select(users, t('entities.task.executor'), 'executor', shouldBeSelected(query.executorId), options)(name='executorId')
     +select(labels, t('views.tasks.label'), 'label', shouldBeSelected(query.labelId), options)(name='labelId')
     .form-group.form-check
       - const isSelected = Boolean(query.creatorId);
@@ -20,7 +20,7 @@ block content
         th= t('entities.name')
         th= t('entities.task.status')
         th= t('entities.task.creator')
-        th= t('entities.task.owner')
+        th= t('entities.task.executor')
         th= t('entities.createdAt')
     tbody
       each task in tasks
@@ -30,7 +30,7 @@ block content
             a(href=route('taskProfile', { id: task.id }))= task.name
           td= task.status.name
           td= task.creator.name
-          td= task.owner && task.owner.name
+          td= task.executor && task.executor.name
           td= formatDate(task.createdAt)
           td
             a(href=route('editTask', { id: task.id }))=t('views.edit')

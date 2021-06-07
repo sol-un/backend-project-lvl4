@@ -18,7 +18,7 @@ module.exports = {
         description: 'Описание',
         status: 'Статус',
         creator: 'Автор',
-        owner: 'Исполнитель',
+        executor: 'Исполнитель',
         labels: 'Метки',
       },
     },

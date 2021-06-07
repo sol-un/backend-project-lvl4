@@ -15,6 +15,6 @@ block content
         class="form-control"
       )= task.description
     +select(statuses, t('entities.task.status'), 'statusId', shouldBeSelected(task.status_id), { firstOptionEmpty: true }, errors)
-    +select(users, t('entities.task.owner'), 'executorId', shouldBeSelected(task.owner_id), { firstOptionEmpty: true })
+    +select(users, t('entities.task.executor'), 'executorId', shouldBeSelected(task.executor_id), { firstOptionEmpty: true })
     +select(labels, t('entities.task.labels'), 'labels', shouldBeSelected(labelIds))(multiple)
     +submit()(value=t('views.create'))

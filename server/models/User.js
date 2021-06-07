@@ -42,7 +42,7 @@ export default class User extends unique(Model) {
         modelClass: path.join(__dirname, 'Task.js'),
         join: {
           from: 'users.id',
-          to: 'tasks.owner_id',
+          to: 'tasks.executor_id',
         },
       },
     };

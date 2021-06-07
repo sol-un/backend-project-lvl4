@@ -5,22 +5,22 @@ export default (app) => {
   app
     .get('/tasks', { name: 'tasks', preValidation: app.authenticate }, async (req, reply) => {
       const {
-        creatorId, ownerId, statusId, labelId,
+        creatorId, executorId, statusId, labelId,
       } = req.query;
 
       const query = app.objection.models.task.query()
         .withGraphJoined(`[
           status(selectName),
           creator,
-          owner,
+          executor,
           labels(selectId) as labelIds
         ]`);
 
       if (creatorId) {
         query.modify('filterByCreatorId', creatorId);
       }
-      if (ownerId) {
-        query.modify('filterByOwnerId', ownerId);
+      if (executorId) {
+        query.modify('filterByExecutorId', executorId);
       }
       if (statusId) {
         query.modify('filterByStatusId', statusId);
@@ -50,7 +50,7 @@ export default (app) => {
         .withGraphJoined(`[
           status(selectName),
           creator,
-          owner,
+          executor,
           labels(selectName) as labelNames
         ]`);
 
@@ -75,7 +75,7 @@ export default (app) => {
       const taskData = {
         name,
         description,
-        owner_id: isEmpty(executorId) ? null : Number(executorId),
+        executor_id: isEmpty(executorId) ? null : Number(executorId),
         status_id: isEmpty(statusId) ? null : Number(statusId),
         creator_id: Number(req.user.id),
       };
@@ -116,7 +116,7 @@ export default (app) => {
         id: Number(req.params.id),
         name,
         description,
-        owner_id: isEmpty(executorId) ? null : Number(executorId),
+        executor_id: isEmpty(executorId) ? null : Number(executorId),
         status_id: Number(statusId),
         creator_id: Number(req.user.id),
       };
