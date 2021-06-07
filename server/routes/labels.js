@@ -28,7 +28,7 @@ export default (app) => {
     .patch('/labels/:id', { name: 'updateLabel', preValidation: app.authenticate }, async (req, reply) => {
       const label = await app.objection.models.label.query().findById(req.params.id);
       try {
-        await label.$query().update(req.body.data);
+        await label.$query().patch(req.body.data);
         req.flash('info', i18next.t('flash.labels.edit.success'));
         reply.redirect(app.reverse('labels'));
         return reply;

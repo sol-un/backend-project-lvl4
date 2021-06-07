@@ -32,7 +32,7 @@ export default (app) => ({
       number: (idToSelect) => selectable.toString() === idToSelect.toString(),
       string: (idToSelect) => selectable === idToSelect.toString(),
       object: (idToSelect) => selectable && selectable
-        .map((item) => item.toString())
+        .map((item) => item.id?.toString() ?? item.toString())
         .includes(idToSelect.toString()),
     };
     return dispatcher[typeof (selectable)];

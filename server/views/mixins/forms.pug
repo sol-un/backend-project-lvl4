@@ -7,7 +7,7 @@ mixin formFor(entity = null)
 
 mixin input(entity, labelText, propertyName, errors = {})
   - propertyErrors = _.get(errors, propertyName)
-  - classLine = 'form-control' + (_.isEmpty(errors) ? '' : ' is-invalid')
+  - classLine = 'form-control' + (_.isEmpty(propertyErrors) ? '' : ' is-invalid')
   - inputId = getInputId(propertyName)
   .form-group(class=(errors[propertyName] && 'has-danger'))
     label(
@@ -35,7 +35,7 @@ mixin buttonTo(action, method)
 
 mixin select(entities, labelText, propertyName, shouldBeSelected = () => false, options = {}, errors = {})
   - propertyErrors = _.get(errors, _.snakeCase(propertyName))
-  - classLine = 'form-control' + (_.isEmpty(errors) ? '' : ' is-invalid')
+  - classLine = 'form-control' + (_.isEmpty(propertyErrors) ? '' : ' is-invalid')
   - inputId = getInputId(propertyName)
   .form-group
     label(

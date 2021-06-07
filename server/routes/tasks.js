@@ -1,5 +1,22 @@
 import i18next from 'i18next';
-import { isEmpty } from 'lodash';
+import { isEmpty, snakeCase, identity } from 'lodash';
+
+const normalizeDigit = (value) => (isEmpty(value.toString()) ? null : Number(value));
+
+const normalizerDispatcher = {
+  name: identity,
+  description: identity,
+  statusId: normalizeDigit,
+  executorId: normalizeDigit,
+  creatorId: normalizeDigit,
+  labels: (value) => [...value].map((id) => ({ id })),
+};
+
+const normalizeData = (data, creatorId, taskId) => Object.entries(data)
+  .reduce((acc, [key, value]) => ({
+    ...acc,
+    [snakeCase(key)]: normalizerDispatcher[key](value),
+  }), { creator_id: creatorId, id: taskId });
 
 export default (app) => {
   app
@@ -9,12 +26,7 @@ export default (app) => {
       } = req.query;
 
       const query = app.objection.models.task.query()
-        .withGraphJoined(`[
-          status(selectName),
-          creator,
-          executor,
-          labels(selectId) as labelIds
-        ]`);
+        .withGraphJoined('[status, creator, executor, labels]');
 
       if (creatorId) {
         query.modify('filterByCreatorId', creatorId);
@@ -47,12 +59,7 @@ export default (app) => {
     .get('/tasks/:id', { name: 'taskProfile', preValidation: app.authenticate }, async (req, reply) => {
       const task = await app.objection.models.task.query()
         .findById(req.params.id)
-        .withGraphJoined(`[
-          status(selectName),
-          creator,
-          executor,
-          labels(selectName) as labelNames
-        ]`);
+        .withGraphJoined('[status, creator, executor, labels]');
 
       reply.render('tasks/profile', { task });
       return reply;
@@ -67,30 +74,12 @@ export default (app) => {
       });
     })
     .post('/tasks', { preValidation: app.authenticate }, async (req, reply) => {
-      const {
-        name,
-        description,
-        statusId, executorId, labels: labelIds = [],
-      } = req.body.data;
-      const taskData = {
-        name,
-        description,
-        executor_id: isEmpty(executorId.toString()) ? null : Number(executorId),
-        status_id: isEmpty(statusId.toString()) ? null : Number(statusId),
-        creator_id: Number(req.user.id),
-      };
-
+      const creatorId = Number(req.user.id);
+      const taskData = normalizeData(req.body.data, creatorId);
       try {
         await app.objection.models.task
           .query()
-          .insertGraph([
-            {
-              ...taskData,
-              labels: [...labelIds]
-                .map((id) => ({ id })),
-            },
-          ],
-          { relate: true });
+          .insertGraph([taskData], { relate: true });
 
         req.flash('info', i18next.t('flash.tasks.create.success'));
         reply.redirect(app.reverse('tasks'));
@@ -101,40 +90,23 @@ export default (app) => {
         const labels = await app.objection.models.label.query();
         req.flash('error', i18next.t('flash.tasks.create.error'));
         reply.render('tasks/new', {
-          task: taskData, statuses, users, labels, labelIds, errors: error.data,
+          task: req.body.data,
+          statuses,
+          users,
+          labels,
+          errors: error.data,
         });
         return reply;
       }
     })
     .patch('/tasks/:id', { name: 'updateTask', preValidation: app.authenticate }, async (req, reply) => {
-      const {
-        name,
-        description,
-        statusId, executorId, labels: labelIds = [],
-      } = req.body.data;
-      const taskData = {
-        id: Number(req.params.id),
-        name,
-        description,
-        executor_id: isEmpty(executorId.toString()) ? null : Number(executorId),
-        status_id: Number(statusId),
-        creator_id: Number(req.user.id),
-      };
-
+      const creatorId = Number(req.user.id);
+      const taskId = Number(req.params.id);
+      const taskData = normalizeData(req.body.data, creatorId, taskId);
       try {
         await await app.objection.models.task
           .query()
-          .upsertGraph([
-            {
-              ...taskData,
-              labels: [...labelIds]
-                .map((id) => ({ id })),
-            },
-          ],
-          {
-            relate: true,
-            unrelate: true,
-          });
+          .upsertGraph([taskData], { relate: true, unrelate: true });
 
         req.flash('info', i18next.t('flash.tasks.edit.success'));
         reply.redirect(app.reverse('tasks'));
@@ -145,7 +117,14 @@ export default (app) => {
         const labels = await app.objection.models.label.query();
         req.flash('error', i18next.t('flash.editError'));
         reply.render('tasks/edit', {
-          task: taskData, statuses, users, labels, labelIds, errors: error.data,
+          task: {
+            ...req.body.data,
+            id: taskId,
+          },
+          statuses,
+          users,
+          labels,
+          errors: error.data,
         });
         return reply;
       }
@@ -172,7 +151,7 @@ export default (app) => {
     .get('/tasks/:id/edit', { name: 'editTask', preValidation: app.authenticate }, async (req, reply) => {
       const task = await app.objection.models.task.query()
         .findById(req.params.id)
-        .withGraphJoined('labels(selectId) as labelIds');
+        .withGraphJoined('labels');
 
       const statuses = await app.objection.models.status.query();
       const users = await app.objection.models.user.query();

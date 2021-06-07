@@ -15,7 +15,7 @@ block content
         name="data[description]"
         class="form-control"
       )= task.description
-    +select(statuses, t('entities.task.status'), 'statusId', shouldBeSelected(task.statusId || task.status_id))
-    +select(users, t('entities.task.executor'), 'executorId', shouldBeSelected(task.executorId || task.executor_id), { firstOptionEmpty: true })
-    +select(labels, t('entities.task.labels'), 'labels', shouldBeSelected(labelIds || task.labelIds.map(({ id }) => id)))(multiple)
+    +select(statuses, t('entities.task.status'), 'statusId', shouldBeSelected(task.statusId))
+    +select(users, t('entities.task.executor'), 'executorId', shouldBeSelected(task.executorId), { firstOptionEmpty: true })
+    +select(labels, t('entities.task.labels'), 'labels', shouldBeSelected(task.labels))(multiple)
     +submit()(value=t('views.edit'))
