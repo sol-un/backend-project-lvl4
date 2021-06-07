@@ -25,12 +25,12 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hexlet-boilerplates/fastify-nodejs-application.git"
+    "url": "git+https://github.com/sol-un/backend-project-lvl4-TaskManager.git"
   },
   "bugs": {
-    "url": "https://github.com/hexlet-boilerplates/fastify-nodejs-application/issues"
+    "url": "https://github.com/sol-un/backend-project-lvl4-TaskManager/issues"
   },
-  "homepage": "https://github.com/hexlet-boilerplates/fastify-nodejs-application.git#readme",
+  "homepage": "https://github.com/sol-un/backend-project-lvl4-TaskManager.git#readme",
   "dependencies": {
     "bootstrap": "^4.6.0",
     "dotenv": "^8.2.0",
