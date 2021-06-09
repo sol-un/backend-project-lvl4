@@ -97,9 +97,12 @@ describe('test users CRUD', () => {
   });
 
   it('delete', async () => {
-    const user = await models.user.query().findOne({ email: testData.users.existing.email });
-    await user.$relatedQuery('createdTasks').delete();
-    await user.$relatedQuery('ownedTasks').delete();
+    const userData = testData.users.existingWithoutRelations;
+    cookies = await logIn(app, userData);
+
+    const user = await models.user
+      .query()
+      .findOne({ email: userData.email });
 
     const { id } = user;
     const response = await app.inject({

@@ -1,6 +1,6 @@
 // @ts-check
 
-import { unset } from 'lodash';
+import { omit } from 'lodash';
 import getApp from '../server/index.js';
 import { getTestData, prepareData, logIn } from './helpers/index.js';
 
@@ -43,6 +43,18 @@ describe('test tasks CRUD', () => {
     expect(response.statusCode).toBe(200);
   });
 
+  it('profile', async () => {
+    const { id } = await models.task.query().findOne({ name: testData.tasks.existing.name });
+
+    const response = await app.inject({
+      method: 'GET',
+      url: app.reverse('taskProfile', { id }),
+      cookies,
+    });
+
+    expect(response.statusCode).toBe(200);
+  });
+
   it('edit', async () => {
     const { id } = await models.task.query().findOne({ name: testData.tasks.existing.name });
 
@@ -56,7 +68,7 @@ describe('test tasks CRUD', () => {
   });
 
   it('create', async () => {
-    const params = { ...testData.tasks.new };
+    const params = testData.tasks.new;
     const response = await app.inject({
       method: 'POST',
       url: app.reverse('tasks'),
@@ -70,9 +82,8 @@ describe('test tasks CRUD', () => {
     const task = await models.task.query().findOne({ name: params.name });
     const taskLabels = await task.$relatedQuery('labels');
     const expectedLabels = await models.label.query().findByIds(params.labels);
-    unset(params, 'labels');
 
-    expect(task).toMatchObject(params);
+    expect(task).toMatchObject(omit(params, 'labels'));
     expect(taskLabels).toMatchObject(expectedLabels);
   });
 
@@ -96,9 +107,8 @@ describe('test tasks CRUD', () => {
     const task = await models.task.query().findOne({ name: params.name });
     const taskLabels = await task.$relatedQuery('labels');
     const expectedLabels = await models.label.query().findByIds(params.labels);
-    unset(params, 'labels');
 
-    expect(task).toMatchObject(params);
+    expect(task).toMatchObject(omit(params, 'labels'));
     expect(taskLabels).toMatchObject(expectedLabels);
   });
 
