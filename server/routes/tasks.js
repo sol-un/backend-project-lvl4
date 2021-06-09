@@ -8,7 +8,6 @@ const normalizerDispatcher = {
   description: identity,
   statusId: normalizeDigit,
   executorId: normalizeDigit,
-  creatorId: normalizeDigit,
   labels: (value) => [...value].map((id) => ({ id })),
 };
 
@@ -26,10 +25,11 @@ export default (app) => {
       } = req.query;
 
       const query = app.objection.models.task.query()
-        .withGraphJoined('[status, creator, executor, labels]');
+        .withGraphJoined('[status, creator, executor, labels]')
+        .orderBy('created_at', 'desc');
 
       if (creatorId) {
-        query.modify('filterByCreatorId', creatorId);
+        query.modify('filterByCreatorId', req.user.id);
       }
       if (executorId) {
         query.modify('filterByExecutorId', executorId);
@@ -48,7 +48,6 @@ export default (app) => {
       const labels = await app.objection.models.label.query();
       reply.render('tasks/index', {
         tasks,
-        creatorId: req.user.id,
         query: req.query,
         statuses,
         users,
@@ -77,9 +76,10 @@ export default (app) => {
       const creatorId = Number(req.user.id);
       const taskData = normalizeData(req.body.data, creatorId);
       try {
-        await app.objection.models.task
-          .query()
-          .insertGraph([taskData], { relate: true });
+        const { task } = app.objection.models;
+        await task.transaction(async (trx) => task
+          .query(trx)
+          .insertGraph(taskData, { relate: true }));
 
         req.flash('info', i18next.t('flash.tasks.create.success'));
         reply.redirect(app.reverse('tasks'));
@@ -104,9 +104,10 @@ export default (app) => {
       const taskId = Number(req.params.id);
       const taskData = normalizeData(req.body.data, creatorId, taskId);
       try {
-        await await app.objection.models.task
-          .query()
-          .upsertGraph([taskData], { relate: true, unrelate: true });
+        const { task } = app.objection.models;
+        await task.transaction(async (trx) => task
+          .query(trx)
+          .upsertGraph(taskData, { relate: true, unrelate: true }));
 
         req.flash('info', i18next.t('flash.tasks.edit.success'));
         reply.redirect(app.reverse('tasks'));

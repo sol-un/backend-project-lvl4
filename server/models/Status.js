@@ -31,15 +31,4 @@ export default class Status extends Model {
       },
     };
   }
-
-  static get modifiers() {
-    return {
-      selectName(builder) {
-        builder.select('name');
-      },
-      selectId(builder) {
-        builder.select('id');
-      },
-    };
-  }
 }
