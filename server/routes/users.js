@@ -23,6 +23,7 @@ export default (app) => {
         return reply;
       } catch (error) {
         req.flash('error', i18next.t('flash.users.create.error'));
+        reply.statusCode = 422;
         reply.render('users/new', { user: req.body.data, errors: error.data });
         return reply;
       }
@@ -41,6 +42,7 @@ export default (app) => {
         return reply;
       } catch (error) {
         req.flash('error', i18next.t('flash.editError'));
+        reply.statusCode = 422;
         reply.render('users/edit', { user: { ...req.body.data, id: req.user.id }, errors: error.data });
         return reply;
       }
@@ -62,15 +64,11 @@ export default (app) => {
         return reply;
       }
 
-      try {
-        await user.$query().delete();
-        req.logOut();
-        req.flash('info', i18next.t('flash.users.delete.success'));
-        reply.redirect(app.reverse('users'));
-        return reply;
-      } catch (error) {
-        return app.httpErrors.internalServerError(error);
-      }
+      await user.$query().delete();
+      req.logOut();
+      req.flash('info', i18next.t('flash.users.delete.success'));
+      reply.redirect(app.reverse('users'));
+      return reply;
     })
     .get('/users/:id/edit', { name: 'editUser', preValidation: app.authenticate }, (req, reply) => {
       if (req.user.id !== Number(req.params.id)) {

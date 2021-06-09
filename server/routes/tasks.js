@@ -89,6 +89,7 @@ export default (app) => {
         const users = await app.objection.models.user.query();
         const labels = await app.objection.models.label.query();
         req.flash('error', i18next.t('flash.tasks.create.error'));
+        reply.statusCode = 422;
         reply.render('tasks/new', {
           task: req.body.data,
           statuses,
@@ -117,6 +118,7 @@ export default (app) => {
         const users = await app.objection.models.user.query();
         const labels = await app.objection.models.label.query();
         req.flash('error', i18next.t('flash.editError'));
+        reply.statusCode = 422;
         reply.render('tasks/edit', {
           task: {
             ...req.body.data,
@@ -134,20 +136,16 @@ export default (app) => {
       const task = await app.objection.models.task.query().findById(req.params.id);
 
       if (req.user.id !== Number(task.creatorId)) {
-        req.flash('error', i18next.t('flash.tasks.IDerror'));
+        req.flash('error', i18next.t('flash.tasks.accessError'));
         reply.redirect(app.reverse('tasks'));
         return reply;
       }
 
-      try {
-        await task.$relatedQuery('labels').unrelate();
-        await task.$query().delete();
-        req.flash('info', i18next.t('flash.tasks.delete.success'));
-        reply.redirect(app.reverse('tasks'));
-        return reply;
-      } catch (error) {
-        return app.httpErrors.internalServerError(error);
-      }
+      await task.$relatedQuery('labels').unrelate();
+      await task.$query().delete();
+      req.flash('info', i18next.t('flash.tasks.delete.success'));
+      reply.redirect(app.reverse('tasks'));
+      return reply;
     })
     .get('/tasks/:id/edit', { name: 'editTask', preValidation: app.authenticate }, async (req, reply) => {
       const task = await app.objection.models.task.query()

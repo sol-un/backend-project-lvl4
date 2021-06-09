@@ -21,6 +21,7 @@ export default (app) => {
         return reply;
       } catch (error) {
         req.flash('error', i18next.t('flash.labels.create.error'));
+        reply.statusCode = 422;
         reply.render('labels/new', { label: req.body.data, errors: error.data });
         return reply;
       }
@@ -34,6 +35,7 @@ export default (app) => {
         return reply;
       } catch (error) {
         req.flash('error', i18next.t('flash.editError'));
+        reply.statusCode = 422;
         reply.render('labels/edit', { label, errors: error.data });
         return reply;
       }
@@ -48,14 +50,10 @@ export default (app) => {
         return reply;
       }
 
-      try {
-        await label.$query().delete();
-        req.flash('info', i18next.t('flash.labels.delete.success'));
-        reply.redirect(app.reverse('labels'));
-        return reply;
-      } catch (error) {
-        return app.httpErrors.internalServerError(error);
-      }
+      await label.$query().delete();
+      req.flash('info', i18next.t('flash.labels.delete.success'));
+      reply.redirect(app.reverse('labels'));
+      return reply;
     })
     .get('/labels/:id/edit', { name: 'editLabel', preValidation: app.authenticate }, async (req, reply) => {
       const label = await app.objection.models.label.query().findById(req.params.id);

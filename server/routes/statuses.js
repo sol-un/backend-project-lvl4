@@ -21,6 +21,7 @@ export default (app) => {
         return reply;
       } catch (error) {
         req.flash('error', i18next.t('flash.statuses.create.error'));
+        reply.statusCode = 422;
         reply.render('statuses/new', { status: req.body.data, errors: error.data });
         return reply;
       }
@@ -34,6 +35,7 @@ export default (app) => {
         return reply;
       } catch (error) {
         req.flash('error', i18next.t('flash.editError'));
+        reply.statusCode = 422;
         reply.render('statuses/edit', { status, errors: error.data });
         return reply;
       }
@@ -48,14 +50,10 @@ export default (app) => {
         return reply;
       }
 
-      try {
-        await status.$query().delete();
-        req.flash('info', i18next.t('flash.statuses.delete.success'));
-        reply.redirect(app.reverse('statuses'));
-        return reply;
-      } catch (error) {
-        return app.httpErrors.internalServerError(error);
-      }
+      await status.$query().delete();
+      req.flash('info', i18next.t('flash.statuses.delete.success'));
+      reply.redirect(app.reverse('statuses'));
+      return reply;
     })
     .get('/statuses/:id/edit', { name: 'editStatus', preValidation: app.authenticate }, async (req, reply) => {
       const status = await app.objection.models.status.query().findById(req.params.id);
