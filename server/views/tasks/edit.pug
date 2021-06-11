@@ -7,15 +7,8 @@ block content
   +formFor()(action=route('updateTask', { id: task.id }) method='post')
     input(name="_method" type="hidden" value="patch")
     +input(task, t('entities.name'), 'name', errors)(type="text")
-    .form-group
-      label(for="data_description")=t('entities.task.description')
-      textarea(
-        rows= '3'
-        id="data_description"
-        name="data[description]"
-        class="form-control"
-      )= task.description
-    +select(statuses, t('entities.task.status'), 'statusId', shouldBeSelected(task.statusId))
-    +select(users, t('entities.task.executor'), 'executorId', shouldBeSelected(task.executorId), { firstOptionEmpty: true })
-    +select(labels, t('entities.task.labels'), 'labels', shouldBeSelected(task.labels))(multiple)
+    +textarea(task.description, t('entities.task.description'), 'description', 3)
+    +select(statuses, t('entities.task.status'), 'statusId', task.statusId)
+    +select(users, t('entities.task.executor'), 'executorId', task.executorId, { firstOptionEmpty: true })
+    +select(labels, t('entities.task.labels'), 'labels', task.labels)(multiple)
     +submit()(value=t('views.edit'))

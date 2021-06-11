@@ -18,6 +18,7 @@ block content
           td= formatDate(user.createdAt)
           td
             a(href=route('editUser', { id: user.id }))=t('views.edit')
-            +formFor()(action=route('deleteUser', { id: user.id }) method="post")
-              input(name="_method" type="hidden" value="delete")
-              input(class='btn btn-link' type='submit' value=t('views.delete'))
+            +buttonTo(
+              route('deleteUser', { id: user.id }),
+              'delete'
+            )(class='btn btn-link' value=t('views.delete'))

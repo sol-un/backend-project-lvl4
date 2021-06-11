@@ -1,7 +1,7 @@
 extends ../layouts/application.pug
 
 block content
-  a.btn.btn-primary.mb-3(role='button' href=route('newLabel'))=t('views.labels.newLink')
+  a.nav-link(role='link' href=route('newLabel'))=t('views.labels.newLink')
   table.table.table-striped
     thead
       tr
@@ -16,6 +16,7 @@ block content
           td= formatDate(label.createdAt)
           td
             a(href=route('editLabel', { id: label.id }))=t('views.edit')
-            +formFor()(action=route('deleteLabel', { id: label.id }) method="post")
-              input(name="_method" type="hidden" value="delete")
-              input(class='btn btn-link' type='submit' value=t('views.delete'))
+            +buttonTo(
+              route('deleteLabel', { id: label.id }),
+              'delete'
+            )(class='btn btn-link' value=t('views.delete'))

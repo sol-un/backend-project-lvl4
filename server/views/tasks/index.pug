@@ -1,16 +1,13 @@
 extends ../layouts/application.pug
 
 block content
-  a.btn.btn-primary.mb-3(role='button' href=route('newTask'))=t('views.tasks.newLink')
+  a.nav-link(role='link' href=route('newTask'))=t('views.tasks.newLink')
   form(action=route('tasks') method='get')
-    - const options = { firstOptionEmpty: true };
-    +select(statuses, t('entities.task.status'), 'status', shouldBeSelected(query.statusId), options)(name='statusId')
-    +select(users, t('entities.task.executor'), 'executor', shouldBeSelected(query.executorId), options)(name='executorId')
-    +select(labels, t('views.tasks.label'), 'label', shouldBeSelected(query.labelId), options)(name='labelId')
-    .form-group.form-check
-      - const isSelected = Boolean(query.creatorId);
-      input#creatorId.form-check-input(type='checkbox' name='creatorId' checked=isSelected)
-      label.form-check-label(for='creatorId')= t('views.tasks.myTasks')
+    - const config = { firstOptionEmpty: true };
+    +select(statuses, t('entities.task.status'), 'status', query.statusId, config)(name='statusId')
+    +select(users, t('entities.task.executor'), 'executor', query.executorId, config)(name='executorId')
+    +select(labels, t('views.tasks.label'), 'label', query.labelId, config)(name='labelId')
+    +checkbox(Boolean(query.creatorId), t('views.tasks.myTasks'), 'creatorId')
     +submit()(value=t('views.tasks.showFiltered'))
       a.btn.btn-primary.ml-2(role='button' href=route('tasks'))=t('views.tasks.clearFilters')
   table.table.table-striped
@@ -34,6 +31,7 @@ block content
           td= formatDate(task.createdAt)
           td
             a(href=route('editTask', { id: task.id }))=t('views.edit')
-            +formFor()(action=route('deleteTask', { id: task.id }) method="post")
-              input(name="_method" type="hidden" value="delete")
-              input(class='btn btn-link' type='submit' value=t('views.delete'))
+            +buttonTo(
+              route('deleteTask', { id: task.id }),
+              'delete'
+            )(class='btn btn-link' value=t('views.delete'))

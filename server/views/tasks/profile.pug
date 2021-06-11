@@ -29,6 +29,7 @@ block content
         .row.p-1
           .col
             a(href=route('editTask', { id: task.id }))=t('views.edit')
-            +formFor()(action=route('deleteTask', { id: task.id }) method="post")
-              input(name="_method" type="hidden" value="delete")
-              input(class='btn btn-link' type='submit' value=t('views.delete'))
+            +buttonTo(
+              route('deleteTask', { id: task.id }),
+              'delete'
+            )(class='btn btn-link' value=t('views.delete'))

@@ -1,7 +1,7 @@
 extends ../layouts/application.pug
 
 block content
-  a.btn.btn-primary.mb-3(role='button' href=route('newStatus'))=t('views.statuses.newLink')
+  a.nav-link(role='link' href=route('newStatus'))=t('views.statuses.newLink')
   table.table.table-striped
     thead
       tr
@@ -16,6 +16,7 @@ block content
           td= formatDate(status.createdAt)
           td
             a(href=route('editStatus', { id: status.id }))=t('views.edit')
-            +formFor()(action=route('deleteStatus', { id: status.id }) method="post")
-              input(name="_method" type="hidden" value="delete")
-              input(class='btn btn-link' type='submit' value=t('views.delete'))
+            +buttonTo(
+              route('deleteStatus', { id: status.id }),
+              'delete'
+            )(class='btn btn-link' value=t('views.delete'))

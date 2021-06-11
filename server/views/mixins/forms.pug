@@ -1,5 +1,17 @@
 - const getInputName = (property) => `data[${property}]`
 - const getInputId = (property) => `data_${property}`
+-
+  const shouldBeSelected = (idToSelect) => {
+    const predicateDispatcher = {
+      number: (selectable) => idToSelect.toString() === selectable.toString(),
+      string: (selectable) => idToSelect === selectable.toString(),
+      object: (selectable) => idToSelect && idToSelect
+        .map((item) => item.id?.toString() ?? item.toString())
+        .includes(selectable.toString()),
+      undefined: () => false,
+    };
+    return predicateDispatcher[typeof (idToSelect)];
+  }
 
 mixin formFor(entity = null)
   form&attributes(attributes)
@@ -33,7 +45,8 @@ mixin buttonTo(action, method)
     input(name="_method" type="hidden" value=method)
     input(type='submit')&attributes(attributes)
 
-mixin select(entities, labelText, propertyName, shouldBeSelected = () => false, options = {}, errors = {})
+mixin select(entities, labelText, propertyName, idToSelect, config = {}, errors = {})
+  - shouldOptionBeSelected = shouldBeSelected(idToSelect)
   - propertyErrors = _.get(errors, _.snakeCase(propertyName))
   - classLine = 'form-control' + (_.isEmpty(propertyErrors) ? '' : ' is-invalid')
   - inputId = getInputId(propertyName)
@@ -46,10 +59,39 @@ mixin select(entities, labelText, propertyName, shouldBeSelected = () => false, 
       name=getInputName(propertyName)
       class=classLine
     )&attributes(attributes)
-      if (options.firstOptionEmpty)
+      if (config.firstOptionEmpty)
         option
       each entity in entities
-        - const isSelected = shouldBeSelected(entity.id);
-        option(value=`${entity.id}` selected=isSelected)= entity.name
+        option(
+          value=`${entity.id}`
+          selected=shouldOptionBeSelected(entity.id)
+        )= entity.name
     if !_.isEmpty(propertyErrors)
       .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
+
+mixin checkbox(isSelected, labelText, propertyName)
+  .form-group.form-check
+    input(
+      id= propertyName
+      name=propertyName
+      class='form-check-input'
+      type='checkbox'
+      checked=isSelected
+    )
+    label(
+      class='form-check-label'
+      for= propertyName
+    )= labelText
+
+mixin textarea(initialValue, labelText, propertyName, rowsCount)
+  - inputId = getInputId(propertyName)
+  .form-group
+    label(
+      for= inputId
+    )= labelText
+    textarea(
+      rows= rowsCount
+      id= inputId
+      name= getInputName(propertyName)
+      class="form-control"
+    )= initialValue

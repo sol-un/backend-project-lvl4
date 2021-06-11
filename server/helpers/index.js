@@ -27,14 +27,4 @@ export default (app) => ({
     const date = new Date(str);
     return date.toLocaleString();
   },
-  shouldBeSelected(selectable) {
-    const dispatcher = {
-      number: (idToSelect) => selectable.toString() === idToSelect.toString(),
-      string: (idToSelect) => selectable === idToSelect.toString(),
-      object: (idToSelect) => selectable && selectable
-        .map((item) => item.id?.toString() ?? item.toString())
-        .includes(idToSelect.toString()),
-    };
-    return dispatcher[typeof (selectable)];
-  },
 });
