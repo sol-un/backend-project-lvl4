@@ -17,14 +17,15 @@ mixin formFor(entity = null)
   form&attributes(attributes)
     block
 
-mixin input(entity, labelText, propertyName, errors = {})
+mixin input(entity, propertyName, errors = {})
   - propertyErrors = _.get(errors, propertyName)
   - classLine = 'form-control' + (_.isEmpty(propertyErrors) ? '' : ' is-invalid')
   - inputId = getInputId(propertyName)
+  - entityName = entity.constructor.name.toLowerCase()
   .form-group(class=(errors[propertyName] && 'has-danger'))
     label(
       for= inputId
-    )= labelText
+    )= t(`entities.${entityName}.${propertyName}`)
     input(
       id= inputId
       name=getInputName(propertyName)

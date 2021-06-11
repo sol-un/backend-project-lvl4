@@ -6,5 +6,5 @@ block header
 block content
   +formFor()(action=route('updateLabel', { id: label.id }) method="post")
     input(name="_method" type="hidden" value="patch")
-    +input(label, t('entities.name'), 'name', errors)(type="text")
+    +input(label, 'name', errors)(type="text")
     +submit()(value=t('views.edit'))

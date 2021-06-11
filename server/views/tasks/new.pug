@@ -5,7 +5,7 @@ block header
 
 block content
   +formFor()(action=route('tasks') method='post')
-    +input(task, t('entities.name'), 'name', errors)(type="text")
+    +input(task, 'name', errors)(type="text")
     .form-group
       label(for="data_description")=t('entities.task.description')
       textarea(

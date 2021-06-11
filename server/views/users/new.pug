@@ -5,8 +5,8 @@ block header
 
 block content
   +formFor()(action=route('users') method='post')
-    +input(user, t('entities.user.firstName'), 'firstName', errors)(type="text")
-    +input(user, t('entities.user.lastName'), 'lastName', errors)(type="text")
-    +input(user, t('entities.user.email'), 'email', errors)(type="text")
-    +input(user, t('entities.user.password'), 'password', errors)(type="password")
+    +input(user, 'firstName', errors)(type="text")
+    +input(user, 'lastName', errors)(type="text")
+    +input(user, 'email', errors)(type="text")
+    +input(user, 'password', errors)(type="password")
     +submit()(value=t('views.users.new.submit'))

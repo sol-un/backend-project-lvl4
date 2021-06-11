@@ -6,7 +6,7 @@ block header
 block content
   +formFor()(action=route('updateTask', { id: task.id }) method='post')
     input(name="_method" type="hidden" value="patch")
-    +input(task, t('entities.name'), 'name', errors)(type="text")
+    +input(task, 'name', errors)(type="text")
     +textarea(task.description, t('entities.task.description'), 'description', 3)
     +select(statuses, t('entities.task.status'), 'statusId', task.statusId)
     +select(users, t('entities.task.executor'), 'executorId', task.executorId, { firstOptionEmpty: true })
