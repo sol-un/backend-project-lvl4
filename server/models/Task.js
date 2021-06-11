@@ -80,7 +80,7 @@ export default class Task extends Model {
         builder
           .where({ statusId });
       },
-      findByLabel(builder, labelId) {
+      filterByLabelId(builder, labelId) {
         builder
           .where({ labelId });
       },

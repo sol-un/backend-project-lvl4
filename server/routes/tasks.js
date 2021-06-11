@@ -11,11 +11,11 @@ const normalizerDispatcher = {
   labels: (value) => [...value].map((id) => ({ id })),
 };
 
-const normalizeData = (data, creatorId, taskId) => Object.entries(data)
+const normalizeData = (data, initialAcc = {}) => Object.entries(data)
   .reduce((acc, [key, value]) => ({
     ...acc,
     [snakeCase(key)]: normalizerDispatcher[key](value),
-  }), { creator_id: creatorId, id: taskId });
+  }), initialAcc);
 
 export default (app) => {
   app
@@ -38,7 +38,7 @@ export default (app) => {
         query.modify('filterByStatusId', statusId);
       }
       if (labelId) {
-        query.modify('findByLabel', labelId);
+        query.modify('filterByLabelId', labelId);
       }
 
       const tasks = await query;
@@ -74,7 +74,7 @@ export default (app) => {
     })
     .post('/tasks', { preValidation: app.authenticate }, async (req, reply) => {
       const creatorId = Number(req.user.id);
-      const taskData = normalizeData(req.body.data, creatorId);
+      const taskData = normalizeData(req.body.data, { creator_id: creatorId });
       try {
         const { task } = app.objection.models;
         await task.transaction(async (trx) => task
@@ -103,7 +103,12 @@ export default (app) => {
     .patch('/tasks/:id', { name: 'updateTask', preValidation: app.authenticate }, async (req, reply) => {
       const creatorId = Number(req.user.id);
       const taskId = Number(req.params.id);
-      const taskData = normalizeData(req.body.data, creatorId, taskId);
+      const initialAcc = {
+        creator_id: creatorId,
+        id: taskId,
+        labels: [],
+      };
+      const taskData = normalizeData(req.body.data, initialAcc);
       try {
         const { task } = app.objection.models;
         await task.transaction(async (trx) => task
