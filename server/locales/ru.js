@@ -4,10 +4,18 @@ module.exports = {
   translation: {
     appName: 'TaskManager',
     entities: {
-      id: 'ID',
-      name: 'Наименование',
-      createdAt: 'Дата создания',
+      label: {
+        id: 'ID',
+        name: 'Наименование',
+        createdAt: 'Дата создания',
+      },
+      status: {
+        id: 'ID',
+        name: 'Наименование',
+        createdAt: 'Дата создания',
+      },
       user: {
+        id: 'ID',
         firstName: 'Имя',
         lastName: 'Фамилия',
         email: 'Email',
@@ -15,11 +23,14 @@ module.exports = {
         createdAt: 'Дата создания',
       },
       task: {
+        id: 'ID',
+        name: 'Наименование',
         description: 'Описание',
         status: 'Статус',
         creator: 'Автор',
         executor: 'Исполнитель',
         labels: 'Метки',
+        createdAt: 'Дата создания',
       },
     },
     flash: {

@@ -13,12 +13,12 @@ block content
   table.table.table-striped
     thead
       tr
-        th= t('entities.id')
-        th= t('entities.name')
+        th= t('entities.task.id')
+        th= t('entities.task.name')
         th= t('entities.task.status')
         th= t('entities.task.creator')
         th= t('entities.task.executor')
-        th= t('entities.createdAt')
+        th= t('entities.task.createdAt')
     tbody
       each task in tasks
         tr
