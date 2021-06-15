@@ -1,14 +1,16 @@
 - const getInputName = (property) => `data[${property}]`
 - const getInputId = (property) => `data_${property}`
 -
-  const shouldBeSelected = (idToSelect) => {
+  const shouldBeSelected = (idToSelect = null) => {
+    if (!idToSelect) {
+      return () => false;
+    }
     const predicateDispatcher = {
-      number: (selectable) => idToSelect.toString() === selectable.toString(),
-      string: (selectable) => idToSelect === selectable.toString(),
-      object: (selectable) => idToSelect && idToSelect
-        .map((item) => item.id?.toString() ?? item.toString())
-        .includes(selectable.toString()),
-      undefined: () => false,
+      number: (selectable) => idToSelect === selectable,
+      string: (selectable) => Number(idToSelect) === selectable,
+      object: (selectable) => idToSelect
+        .map((item) => item.id ?? Number(item))
+        .includes(selectable),
     };
     return predicateDispatcher[typeof (idToSelect)];
   }

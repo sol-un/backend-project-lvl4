@@ -101,16 +101,16 @@ export default (app) => {
       }
     })
     .patch('/tasks/:id', { name: 'updateTask', preValidation: app.authenticate }, async (req, reply) => {
-      const creatorId = Number(req.user.id);
-      const taskId = Number(req.params.id);
+      const { task } = app.objection.models;
+      const { id, creatorId } = await task.query().findById(req.params.id);
       const initialAcc = {
+        id,
         creator_id: creatorId,
-        id: taskId,
         labels: [],
       };
       const taskData = normalizeData(req.body.data, initialAcc);
+
       try {
-        const { task } = app.objection.models;
         await task.transaction(async (trx) => task
           .query(trx)
           .upsertGraph(taskData, { relate: true, unrelate: true }));
@@ -127,7 +127,7 @@ export default (app) => {
         reply.render('tasks/edit', {
           task: {
             ...req.body.data,
-            id: taskId,
+            id,
           },
           statuses,
           users,
